@@ -26,13 +26,15 @@ Chạy trên SQL Server 2022 trong Docker, từ DB rỗng, theo đúng lệnh c�
 - DB có 22 bảng, 26 khóa ngoại; tiếng Việt đọc đúng (`UNICODE(N'Đ')` = 272).
 - Bảng còn dưới 5 dòng dữ liệu: `GIO_HANG` (0 dòng) và `NHAN_VIEN` (3 dòng). Hưng thêm 2 nhân viên ở file `38`; `GIO_HANG` thuộc miền của Bằng (T16).
 
+Sau bước 3 (DDL thật thay file `00`): `90_kiem_thu_cau_truc_rang_buoc.sql` đạt 29/29 ca, file của Đại vẫn 64/64.
+
 ## 3. Phần của Hưng: thứ tự làm và trạng thái
 
 | Bước | Việc | Kết quả để nhóm dùng | Trạng thái |
 |---|---|---|---|
 | 1 | T10: chốt hệ quản trị, thứ tự file, lệnh chạy; chạy thử code hiện có | README mới, mốc 64/64 | ✅ (chờ PR) |
-| 2 | T04, T05, T07, T08: thiết kế 10 bảng, data dictionary (mốc M1) | `docs/csdl-nguoi-dung-san-pham.md` | ⬜ |
-| 3 | T11, T12, T14: DDL thật, dữ liệu `38`, `39` tạm, **xóa file `00`** | `sql/11_…`, `12_…`, `38_…`, `39_…` | ⬜ |
+| 2 | T04, T05, T07, T08: thiết kế 10 bảng, data dictionary (mốc M1) | `docs/csdl-nguoi-dung-san-pham.md` | ✅ (chờ Đại, Khanh rà) |
+| 3 | T11, T12, T14: DDL thật, dữ liệu `38`, `39` tạm, **xóa file `00`** | `sql/11_…`, `12_…`, `38_…`, `39_…`, kiểm thử `90_kiem_thu_cau_truc_rang_buoc.sql` | ✅ (chờ PR) |
 | 4 | T15, T35: ràng buộc liên bảng, `sp_TaoNguoiDung` | `sql/15_rang_buoc_lien_bang.sql` | ⬜ |
 | 5 | T25, T37: trigger `TongSoLuongDaBan`, kiểm thử trigger | `sql/25_trigger_dan_xuat.sql` | ⬜ |
 | 6 | T06, T07: EERD và hình lược đồ 22 bảng | `bao-cao/hinh/` | ⬜ |
@@ -44,12 +46,12 @@ Chạy trên SQL Server 2022 trong Docker, từ DB rỗng, theo đúng lệnh c�
 - Cài theo README, mục "Cài đặt và chạy", rồi chạy "Tạo lại DB" và "Chạy toàn bộ". Kết quả đúng là 64/64 ở file của Đại. Ra khác thì báo Hưng kèm ảnh chụp phần lỗi.
 
 ### Đại
-- Không cần sửa code. Khi Hưng xóa file `00` (bước 3): chú thích ở `sql/13_ddl_don_hang_diem.sql` dòng 7 và `sql/40_du_lieu_mau_don_hang_diem.sql` dòng 10 còn nhắc file `00`, Đại sửa lại cho khớp.
+- Không cần sửa code. File `00` đã bị xóa ở bước 3; chú thích ở `sql/13_ddl_don_hang_diem.sql` dòng 7 và `sql/40_du_lieu_mau_don_hang_diem.sql` dòng 10 còn nhắc file `00`, Đại sửa lại cho khớp (dữ liệu người dùng giờ ở `38`, sản phẩm ở `39`, mã giữ nguyên).
 - Bước 2 xong thì rà `docs/csdl-nguoi-dung-san-pham.md` (M1): khóa, kiểu cột và tên ràng buộc có khớp file `13` và các routine không.
 - Bước 7: Hưng mở issue review T21 (`sp_TaoDonHang`, `sp_CapNhatTrangThaiDon`) theo 5 điểm: rollback, thứ tự khóa, địa chỉ ghép, khóa ghép biến thể, tổng thanh toán không âm.
 
 ### Bằng
-- **Chờ bước 3:** file `39_du_lieu_mau_san_pham.sql` sẽ có sẵn dữ liệu danh mục, thương hiệu, sản phẩm, hình ảnh, biến thể (chuyển nguyên từ file `00`). Bằng mở rộng file này ở T16, giữ nguyên ID 1–6 của sản phẩm và 10 biến thể, vì file `40` của Đại dựa vào chúng.
+- File `39_du_lieu_mau_san_pham.sql` đã có dữ liệu danh mục, thương hiệu, sản phẩm, hình ảnh, biến thể (chuyển nguyên từ file `00`). Bằng mở rộng file này ở T16, giữ nguyên ID 1–6 của sản phẩm và 10 biến thể, vì file `40` của Đại dựa vào chúng.
 - `GIO_HANG` hiện chưa có dòng nào; cần ít nhất 5 dòng ở T16.
 - Dữ liệu người dùng mới (nếu cần) phải gọi `EXEC dbo.sp_TaoNguoiDung …` thay vì INSERT thẳng.
 

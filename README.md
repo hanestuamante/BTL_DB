@@ -31,9 +31,8 @@ Thứ tự dưới đây Hưng đã chốt ở T10 (23/11/2026). Các dòng "ch�
 
 | # | File | Nội dung | Người viết | Trạng thái |
 |---|---|---|---|---|
-| 00 | `00_tam_bang_nguoi_dung_san_pham.sql` | Bảng tạm thay cho 11, 12 — **xóa khi có 11, 12** | Đại | tạm |
-| 11 | `11_ddl_nguoi_dung.sql` | Người dùng, vai trò, địa chỉ, nhân viên, danh mục (T11) | Hưng | chưa có |
-| 12 | `12_ddl_san_pham.sql` | Sản phẩm, biến thể, bảng phụ (T12) | Hưng | chưa có |
+| 11 | `11_ddl_nguoi_dung.sql` | Người dùng, vai trò, địa chỉ, nhân viên, danh mục (T11) | Hưng | đã viết |
+| 12 | `12_ddl_san_pham.sql` | Sản phẩm, biến thể, bảng phụ (T12) | Hưng | đã viết |
 | 13 | `13_ddl_don_hang_diem.sql` | Đơn hàng, chi tiết, giỏ, voucher, đánh giá, nhật ký, chính sách điểm, điểm danh (T13) | Đại | đã viết |
 | 15 | `15_rang_buoc_lien_bang.sql` | Tuổi khách, total specialization, cây danh mục, địa chỉ (T15). Từ file này trở đi, người dùng chỉ được tạo qua `sp_TaoNguoiDung` | Hưng | chưa có |
 | 20 | `20_function_view_diem.sql` | `fn_KiemTraVoucher`, `vw_TienDonHang`, `vw_DiemKhaDung`, `fn_TinhDiemKhaDung` (T23, T26, T27) | Đại | đã viết |
@@ -44,8 +43,8 @@ Thứ tự dưới đây Hưng đã chốt ở T10 (23/11/2026). Các dòng "ch�
 | 28 | `28_sp_tim_bien_the.sql` | `sp_TimBienThe` — Q1 (T28) | Khanh | chưa có |
 | 29 | `29_fn_tinh_tong_thanh_toan.sql` | `fn_TinhTongThanhToan` (T29) | Bằng | chưa có |
 | 30 | `30_sp_thong_ke_ban.sql` | `sp_ThongKeBanTheoSanPham` — Q2 (T30) | Bằng | chưa có |
-| 38 | `38_du_lieu_mau_nguoi_dung.sql` | Dữ liệu mẫu miền người dùng, vai trò, địa chỉ | Hưng | chưa có |
-| 39 | `39_du_lieu_mau_san_pham.sql` | Dữ liệu mẫu miền danh mục, thương hiệu, sản phẩm, biến thể (T16) | Bằng | chưa có |
+| 38 | `38_du_lieu_mau_nguoi_dung.sql` | Dữ liệu mẫu miền người dùng, vai trò, địa chỉ | Hưng | đã viết |
+| 39 | `39_du_lieu_mau_san_pham.sql` | Dữ liệu mẫu miền danh mục, thương hiệu, sản phẩm, biến thể (T16) | Bằng | tạm (Hưng chuyển từ file 00 cũ; Bằng mở rộng) |
 | 40 | `40_du_lieu_mau_don_hang_diem.sql` | Dữ liệu mẫu miền đơn hàng, điểm, voucher, đánh giá, nhật ký | Đại | đã viết |
 | 90 | `90_kiem_thu_<mo_ta>.sql` | Kiểm thử, chạy theo thứ tự chữ cái. File chạy trước file khác không được để lại thay đổi dữ liệu (ca nào sửa dữ liệu thì bọc trong `BEGIN TRAN … ROLLBACK`) | theo module | có phần đơn hàng / điểm |
 | 91, 92 | `91_…`, `92_…` | Kiểm thử đồng thời, chạy tay ở hai phiên | Đại | đã viết |
