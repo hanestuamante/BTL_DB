@@ -34,7 +34,7 @@ Thứ tự dưới đây Hưng đã chốt ở T10 (23/11/2026). Các dòng "ch�
 | 11 | `11_ddl_nguoi_dung.sql` | Người dùng, vai trò, địa chỉ, nhân viên, danh mục (T11) | Hưng | đã viết |
 | 12 | `12_ddl_san_pham.sql` | Sản phẩm, biến thể, bảng phụ (T12) | Hưng | đã viết |
 | 13 | `13_ddl_don_hang_diem.sql` | Đơn hàng, chi tiết, giỏ, voucher, đánh giá, nhật ký, chính sách điểm, điểm danh (T13) | Đại | đã viết |
-| 15 | `15_rang_buoc_lien_bang.sql` | Tuổi khách, total specialization, cây danh mục, địa chỉ (T15). Từ file này trở đi, người dùng chỉ được tạo qua `sp_TaoNguoiDung` | Hưng | chưa có |
+| 15 | `15_rang_buoc_lien_bang.sql` | Tuổi khách, total specialization, cây danh mục, địa chỉ (T15). Từ file này trở đi, người dùng chỉ được tạo qua `sp_TaoNguoiDung` | Hưng | đã viết |
 | 20 | `20_function_view_diem.sql` | `fn_KiemTraVoucher`, `vw_TienDonHang`, `vw_DiemKhaDung`, `fn_TinhDiemKhaDung` (T23, T26, T27) | Đại | đã viết |
 | 21 | `21_trigger_don_hang.sql` | Trigger quyền đánh giá (T24) và các trigger ràng buộc đơn hàng / voucher / chính sách | Đại | đã viết |
 | 22 | `22_crud_bien_the.sql` | `sp_ThemBienThe`, `sp_SuaBienThe`, `sp_XoaBienThe` (T17–T19) | Đại | đã viết |

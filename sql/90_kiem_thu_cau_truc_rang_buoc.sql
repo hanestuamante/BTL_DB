@@ -245,6 +245,84 @@ ROLLBACK;';
 GO
 
 /* =====================================================================
+   V. TOTAL SPECIALIZATION VÀ TUỔI KHÁCH HÀNG (T15: sp_TaoNguoiDung + trigger, RB4)
+   H = ngày VN hôm nay. Mọi ca bọc trong BEGIN TRAN … ROLLBACK.
+   ===================================================================== */
+EXEC #KyVongLoi 'V1', N'Tạo người dùng không có vai trò nào', 50222, N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 911, ''kt.v1'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v1@mail.vn'', NULL, NULL, ''2000-01-01'', 0;
+ROLLBACK;';
+EXEC #KyVongLoi 'V2', N'INSERT thẳng vào NGUOI_DUNG, không qua sp_TaoNguoiDung', 50223, N'BEGIN TRAN;
+INSERT dbo.NGUOI_DUNG (MaNguoiDung, TenDangNhap, MatKhauBam, Ho, Ten, Email) VALUES (901, ''kt.v2'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v2@mail.vn'');
+ROLLBACK;';
+EXEC #KyVongOK 'V3', N'Tạo người dùng vừa là khách vừa là nhân viên (overlapping)', N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 902, ''kt.v3'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v3@mail.vn'', NULL, N''Nữ'', ''2000-01-01'', 1,
+     @MaNhanVien = ''NV90'', @ChucVu = N''Nhân viên thử'', @Luong = 8000000, @NgayVaoLam = ''2025-01-01'';
+IF NOT EXISTS (SELECT 1 FROM dbo.KHACH_HANG WHERE MaNguoiDung = 902) OR NOT EXISTS (SELECT 1 FROM dbo.NHAN_VIEN WHERE MaNguoiDung = 902)
+    THROW 50399, N''Người dùng 902 thiếu một trong hai vai trò.'', 1;
+ROLLBACK;';
+EXEC #KyVongLoi 'V4', N'Xóa vai trò cuối cùng (khách) của người dùng còn tồn tại', 50224, N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 903, ''kt.v4'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v4@mail.vn'', NULL, NULL, ''2000-01-01'', 1;
+DELETE dbo.KHACH_HANG WHERE MaNguoiDung = 903;
+ROLLBACK;';
+EXEC #KyVongOK 'V5', N'Xóa vai trò nhân viên khi vẫn còn vai trò khách', N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 904, ''kt.v5'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v5@mail.vn'', NULL, NULL, ''2000-01-01'', 1,
+     @MaNhanVien = ''NV91'', @ChucVu = N''Nhân viên thử'', @Luong = 8000000, @NgayVaoLam = ''2025-01-01'';
+DELETE dbo.NHAN_VIEN WHERE MaNguoiDung = 904;
+IF NOT EXISTS (SELECT 1 FROM dbo.KHACH_HANG WHERE MaNguoiDung = 904) THROW 50399, N''Người dùng 904 mất luôn vai trò khách.'', 1;
+ROLLBACK;';
+EXEC #KyVongOK 'V6', N'Xóa hẳn người dùng thì vai trò bị xóa theo (CASCADE)', N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 905, ''kt.v6'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v6@mail.vn'', NULL, NULL, ''2000-01-01'', 1;
+DELETE dbo.NGUOI_DUNG WHERE MaNguoiDung = 905;
+IF EXISTS (SELECT 1 FROM dbo.KHACH_HANG WHERE MaNguoiDung = 905) THROW 50399, N''Còn dòng KHACH_HANG của người dùng đã xóa.'', 1;
+ROLLBACK;';
+EXEC #KyVongLoi 'V7', N'Khách còn thiếu một ngày mới đủ 13 tuổi', 50220, N'BEGIN TRAN;
+DECLARE @H DATE = CAST(dbo.fn_ThoiDiemVN() AS DATE);
+DECLARE @NS DATE = DATEADD(DAY, 1, DATEADD(YEAR, -13, @H));
+EXEC dbo.sp_TaoNguoiDung 906, ''kt.v7'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v7@mail.vn'', NULL, NULL, @NS, 1;
+ROLLBACK;';
+EXEC #KyVongOK 'V10', N'Khách tròn 13 tuổi hôm nay được tạo', N'BEGIN TRAN;
+DECLARE @H DATE = CAST(dbo.fn_ThoiDiemVN() AS DATE);
+DECLARE @NS DATE = DATEADD(YEAR, -13, @H);
+EXEC dbo.sp_TaoNguoiDung 907, ''kt.v10'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v10@mail.vn'', NULL, NULL, @NS, 1;
+ROLLBACK;';
+EXEC #KyVongLoi 'V11', N'Có mã nhân viên nhưng thiếu lương', 50225, N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 908, ''kt.v11'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v11@mail.vn'', NULL, NULL, ''2000-01-01'', 0,
+     @MaNhanVien = ''NV92'', @ChucVu = N''Nhân viên thử'', @Luong = NULL, @NgayVaoLam = ''2025-01-01'';
+ROLLBACK;';
+EXEC #KyVongLoi 'V12', N'Khách hàng không có ngày sinh', 50220, N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 909, ''kt.v12'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v12@mail.vn'', NULL, NULL, NULL, 1;
+ROLLBACK;';
+EXEC #KyVongLoi 'V8', N'Sửa ngày sinh làm khách 1 còn 10 tuổi', 50221, N'BEGIN TRAN;
+UPDATE dbo.NGUOI_DUNG SET NgaySinh = DATEADD(YEAR, -10, CAST(dbo.fn_ThoiDiemVN() AS DATE)) WHERE MaNguoiDung = 1;
+ROLLBACK;';
+EXEC #KyVongOK 'V9', N'Nhân viên NV02 (sinh 1998) thêm vai trò khách', N'BEGIN TRAN;
+INSERT dbo.KHACH_HANG (MaNguoiDung) VALUES (5);
+ROLLBACK;';
+EXEC #KyVongLoi 'V13', N'Chuyển vai trò khách cuối cùng sang người khác (UPDATE MaNguoiDung)', 50224, N'BEGIN TRAN;
+EXEC dbo.sp_TaoNguoiDung 910, ''kt.v13'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v13@mail.vn'', NULL, NULL, ''2000-01-01'', 1;
+UPDATE dbo.KHACH_HANG SET MaNguoiDung = 5 WHERE MaNguoiDung = 910;
+ROLLBACK;';
+GO
+
+/* =====================================================================
+   M. CÂY DANH MỤC KHÔNG CÓ VÒNG (RB9, trigger trg_DanhMuc_KhongVongLap)
+   Danh mục mẫu: 1 Thời trang (gốc) > 2 Áo, 3 Giày dép; 4 Điện tử (gốc) > 5 Phụ kiện điện thoại.
+   ===================================================================== */
+EXEC #KyVongLoi 'M2', N'Vòng hai cấp: đặt cha của 1 là con 2 của nó', 50240, N'BEGIN TRAN;
+UPDATE dbo.DANH_MUC SET MaDanhMucCha = 2 WHERE MaDanhMuc = 1;
+ROLLBACK;';
+EXEC #KyVongLoi 'M3', N'Một câu lệnh sửa nhiều dòng tạo vòng 4 ↔ 5', 50240, N'BEGIN TRAN;
+UPDATE dbo.DANH_MUC SET MaDanhMucCha = CASE MaDanhMuc WHEN 4 THEN 5 ELSE 4 END WHERE MaDanhMuc IN (4, 5);
+ROLLBACK;';
+EXEC #KyVongOK 'M4', N'Chuyển danh mục 3 sang dưới danh mục 2 (không tạo vòng)', N'BEGIN TRAN;
+UPDATE dbo.DANH_MUC SET MaDanhMucCha = 2 WHERE MaDanhMuc = 3;
+ROLLBACK;';
+EXEC #KyVongOK 'M5', N'Thêm danh mục con mới dưới danh mục 2', N'BEGIN TRAN;
+INSERT dbo.DANH_MUC (MaDanhMuc, TenDanhMuc, MaDanhMucCha) VALUES (90, N''Áo khoác'', 2);
+ROLLBACK;';
+GO
+
+/* =====================================================================
    K9. ĐẶT CUỐI FILE: file này không để lại thay đổi dữ liệu
    ===================================================================== */
 DECLARE @nd INT = (SELECT COUNT(*) FROM dbo.NGUOI_DUNG),
