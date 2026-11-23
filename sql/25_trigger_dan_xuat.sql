@@ -20,7 +20,10 @@ GO
 
 /* ---------------------------------------------------------------------
    trg_ChiTietDonHang_TongDaBan — Người viết: Khưu Huỳnh Gia Hưng
-   Sản phẩm bị ảnh hưởng = MaSanPham của các dòng trong inserted ∪ deleted.
+   Sản phẩm bị ảnh hưởng = MaSanPham của các dòng trong inserted ∪ deleted mà đơn của dòng đó
+   đang ở DA_GIAO (dòng của đơn chưa giao không nằm trong tổng nên không làm tổng đổi).
+   Nhờ lọc này, sp_TaoDonHang (đơn mới luôn chưa giao) không phải đọc dòng của phiên khác
+   và không khóa SAN_PHAM, nên trigger không làm các phiên đặt đơn chờ nhau.
    --------------------------------------------------------------------- */
 CREATE OR ALTER TRIGGER dbo.trg_ChiTietDonHang_TongDaBan
 ON dbo.CHI_TIET_DON_HANG
@@ -34,10 +37,16 @@ BEGIN
        AND NOT (UPDATE(SoLuongMua) OR UPDATE(MaSanPham) OR UPDATE(MaDonHang))
         RETURN;
 
-    WITH SanPhamAnhHuong AS (
-        SELECT MaSanPham FROM inserted
+    WITH DongThayDoi AS (
+        SELECT MaDonHang, MaSanPham FROM inserted
         UNION
-        SELECT MaSanPham FROM deleted
+        SELECT MaDonHang, MaSanPham FROM deleted
+    ),
+    SanPhamAnhHuong AS (
+        SELECT DISTINCT t.MaSanPham
+        FROM DongThayDoi t
+        JOIN dbo.DON_HANG d ON d.MaDonHang = t.MaDonHang
+        WHERE d.TrangThaiDon = 'DA_GIAO'
     )
     UPDATE sp
     SET TongSoLuongDaBan = ISNULL(x.SoLuong, 0)

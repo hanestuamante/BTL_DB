@@ -163,7 +163,7 @@ Tài liệu phân công ghi "17 ràng buộc gốc" vì bản BTL1 đã chỉnh 
 | `BIEN_THE_SAN_PHAM` | thực thể thường, khóa `MaBienThe` | thực thể yếu, khóa `(MaSanPham, MaBienTheNoiBo)` | mục 2 |
 | `GIO_HANG`, `CHI_TIET_DON_HANG` | khóa ngoại `MaBienThe` | khóa ngoại ghép `(MaSanPham, MaBienTheNoiBo)` | theo thay đổi ở dòng trên |
 | Mục 3.1 bước 3 (thực thể yếu) | chỉ `CHI_TIET_DON_HANG` | thêm `BIEN_THE_SAN_PHAM`, `DIEM_DANH_DANG_NHAP` | |
-| Mục 3.1 bước 9 (thuộc tính dẫn xuất) | tổng số lượng đã bán "không lưu thành cột" | `SAN_PHAM.TongSoLuongDaBan` **được lưu**, trigger T25 tính lại mỗi khi chi tiết đơn hoặc trạng thái đơn đổi | BTL2 mục 2.2.2 yêu cầu trigger duy trì thuộc tính dẫn xuất; trigger tính lại theo tập sản phẩm bị ảnh hưởng nên giá trị không lệch |
+| Mục 3.1 bước 9 (thuộc tính dẫn xuất) | tổng số lượng đã bán "không lưu thành cột" | `SAN_PHAM.TongSoLuongDaBan` **được lưu**, trigger T25 tính lại khi một dòng chi tiết của đơn đã giao thay đổi, hoặc khi đơn vào / ra trạng thái đã giao | BTL2 mục 2.2.2 yêu cầu trigger duy trì thuộc tính dẫn xuất; trigger tính lại theo tập sản phẩm bị ảnh hưởng nên giá trị không lệch, và bỏ qua dòng của đơn chưa giao nên không làm các phiên đặt đơn chờ nhau |
 | `NHAT_KY_XU_LY_DON.MaNhanVien` | bắt buộc | cho phép NULL | nhật ký ghi cả thao tác của khách và hệ thống (phần Đại) |
 | `DANH_MUC` | không có | thêm `UQ_DANH_MUC_TenTrongCha` | tránh hai danh mục cùng tên dưới một cha |
 | Mục 1.4, 3.5: số ràng buộc | 16 (bản trên máy Hưng) | theo ma trận ràng buộc của Khanh (T02) | |
