@@ -39,7 +39,7 @@ Thứ tự dưới đây Hưng đã chốt ở T10 (23/11/2026). Các dòng "ch�
 | 21 | `21_trigger_don_hang.sql` | Trigger quyền đánh giá (T24) và các trigger ràng buộc đơn hàng / voucher / chính sách | Đại | đã viết |
 | 22 | `22_crud_bien_the.sql` | `sp_ThemBienThe`, `sp_SuaBienThe`, `sp_XoaBienThe` (T17–T19) | Đại | đã viết |
 | 23 | `23_quy_trinh_don_hang.sql` | Điểm danh, tạo đơn, chuyển trạng thái / hủy đơn (T20–T22) | Đại | đã viết |
-| 25 | `25_trigger_dan_xuat.sql` | Trigger `SAN_PHAM.TongSoLuongDaBan` (T25) | Hưng | chưa có |
+| 25 | `25_trigger_dan_xuat.sql` | Trigger `SAN_PHAM.TongSoLuongDaBan` (T25) | Hưng | đã viết |
 | 28 | `28_sp_tim_bien_the.sql` | `sp_TimBienThe` — Q1 (T28) | Khanh | chưa có |
 | 29 | `29_fn_tinh_tong_thanh_toan.sql` | `fn_TinhTongThanhToan` (T29) | Bằng | chưa có |
 | 30 | `30_sp_thong_ke_ban.sql` | `sp_ThongKeBanTheoSanPham` — Q2 (T30) | Bằng | chưa có |

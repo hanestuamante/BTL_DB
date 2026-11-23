@@ -28,6 +28,7 @@ Chạy trên SQL Server 2022 trong Docker, từ DB rỗng, theo đúng lệnh c�
 
 Sau bước 3 (DDL thật thay file `00`): `90_kiem_thu_cau_truc_rang_buoc.sql` đạt 29/29 ca, file của Đại vẫn 64/64.
 Sau bước 4 (ràng buộc liên bảng, `sp_TaoNguoiDung`): file kiểm thử của Hưng đạt 46/46, file của Đại vẫn 64/64.
+Sau bước 5 (trigger T25): `90_kiem_thu_dan_xuat_nghiep_vu.sql` đạt 15/15. Sau khi cả 64 ca của Đại chạy xong (tạo, giao, hủy đơn thật), `TongSoLuongDaBan` của cả 6 sản phẩm vẫn bằng giá trị tính lại.
 
 ## 3. Phần của Hưng: thứ tự làm và trạng thái
 
@@ -37,7 +38,7 @@ Sau bước 4 (ràng buộc liên bảng, `sp_TaoNguoiDung`): file kiểm thử 
 | 2 | T04, T05, T07, T08: thiết kế 10 bảng, data dictionary (mốc M1) | `docs/csdl-nguoi-dung-san-pham.md` | ✅ (chờ Đại, Khanh rà) |
 | 3 | T11, T12, T14: DDL thật, dữ liệu `38`, `39` tạm, **xóa file `00`** | `sql/11_…`, `12_…`, `38_…`, `39_…`, kiểm thử `90_kiem_thu_cau_truc_rang_buoc.sql` | ✅ (chờ PR) |
 | 4 | T15, T35: ràng buộc liên bảng, `sp_TaoNguoiDung` | `sql/15_rang_buoc_lien_bang.sql`; file `38` đổi sang gọi `sp_TaoNguoiDung` | ✅ (chờ PR) |
-| 5 | T25, T37: trigger `TongSoLuongDaBan`, kiểm thử trigger | `sql/25_trigger_dan_xuat.sql` | ⬜ |
+| 5 | T25, T37: trigger `TongSoLuongDaBan`, kiểm thử trigger | `sql/25_trigger_dan_xuat.sql`, kiểm thử `90_kiem_thu_dan_xuat_nghiep_vu.sql` | ✅ (chờ PR) |
 | 6 | T06, T07: EERD và hình lược đồ 22 bảng | `bao-cao/hinh/` | ⬜ |
 | 7 | Chạy toàn bộ từ DB rỗng (M2), review T21, mở PR | PR vào `main`, issue review cho Đại | ⬜ |
 
