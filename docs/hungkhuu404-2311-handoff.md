@@ -29,6 +29,7 @@ Chạy trên SQL Server 2022 trong Docker, từ DB rỗng, theo đúng lệnh c�
 Sau bước 3 (DDL thật thay file `00`): `90_kiem_thu_cau_truc_rang_buoc.sql` đạt 29/29 ca, file của Đại vẫn 64/64.
 Sau bước 4 (ràng buộc liên bảng, `sp_TaoNguoiDung`): file kiểm thử của Hưng đạt 46/46, file của Đại vẫn 64/64.
 Sau bước 5 (trigger T25): `90_kiem_thu_dan_xuat_nghiep_vu.sql` đạt 15/15. Sau khi cả 64 ca của Đại chạy xong (tạo, giao, hủy đơn thật), `TongSoLuongDaBan` của cả 6 sản phẩm vẫn bằng giá trị tính lại.
+Kiểm thử hai phiên `91` + `92` của Đại: phiên B bị chặn 17 giây rồi bị từ chối 50119, KH1 còn 73 điểm, đúng kỳ vọng.
 
 ## 3. Phần của Hưng: thứ tự làm và trạng thái
 
@@ -51,6 +52,7 @@ Sau bước 5 (trigger T25): `90_kiem_thu_dan_xuat_nghiep_vu.sql` đạt 15/15. 
 - Không cần sửa code. File `00` đã bị xóa ở bước 3; chú thích ở `sql/13_ddl_don_hang_diem.sql` dòng 7 và `sql/40_du_lieu_mau_don_hang_diem.sql` dòng 10 còn nhắc file `00`, Đại sửa lại cho khớp (dữ liệu người dùng giờ ở `38`, sản phẩm ở `39`, mã giữ nguyên).
 - Bước 2 xong thì rà `docs/csdl-nguoi-dung-san-pham.md` (M1): khóa, kiểu cột và tên ràng buộc có khớp file `13` và các routine không.
 - Bước 7: Hưng mở issue review T21 (`sp_TaoDonHang`, `sp_CapNhatTrangThaiDon`) theo 5 điểm: rollback, thứ tự khóa, địa chỉ ghép, khóa ghép biến thể, tổng thanh toán không âm.
+- Code của Đại đã chạy thật lần đầu ngày 23/11 và đạt 64/64, `91` + `92` cũng đạt. Đại cập nhật cột trạng thái phần mình trong `docs/phan-cong-va-tien-do.md` (dòng chú thích "chưa chạy trên SQL Server" đã cũ).
 
 ### Bằng
 - File `39_du_lieu_mau_san_pham.sql` đã có dữ liệu danh mục, thương hiệu, sản phẩm, hình ảnh, biến thể (chuyển nguyên từ file `00`). Bằng mở rộng file này ở T16, giữ nguyên ID 1–6 của sản phẩm và 10 biến thể, vì file `40` của Đại dựa vào chúng.
