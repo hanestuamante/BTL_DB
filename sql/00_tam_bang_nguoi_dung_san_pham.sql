@@ -1,12 +1,12 @@
 ﻿/* =====================================================================
-   00_TAM_BangGiaDinh_CuaHung.sql
-   !!! FILE TẠM — KHÔNG NỘP — CHỈ ĐỂ CHẠY ĐỘC LẬP PHẦN CỦA ĐẠI !!!
+   00_tam_bang_nguoi_dung_san_pham.sql
+   !!! FILE TẠM — KHÔNG NỘP — XÓA KHI CÓ 11_ddl_nguoi_dung.sql VÀ 12_ddl_san_pham.sql !!!
 
    10 bảng dưới đây thuộc phần việc của Khưu Huỳnh Gia Hưng (T11, T12).
-   Đại viết bản tối giản này để script 13 → 90 chạy được khi Hưng chưa bàn giao.
+   Bản tối giản (Đại viết) để các script 13 → 92 chạy được trước khi có DDL thật.
    Khi có DDL thật của Hưng: BỎ file này, chạy DDL của Hưng thay thế.
 
-   Những điểm Đại CẦN Hưng giữ đúng trong DDL thật (xem docs/ChoNguoiKhac.md):
+   Những điểm DDL thật cần giữ để khớp các bảng 13 (xem docs/phan-cong-va-tien-do.md):
      1. KHACH_HANG không còn cột DiemTichLuy (điểm là thuộc tính dẫn xuất).
      2. DIA_CHI có UNIQUE (MaDiaChi, MaKhachHang) để DON_HANG dùng FK ghép
         → hiện thực RB14 "địa chỉ giao hàng phải thuộc khách đặt đơn" bằng khai báo.

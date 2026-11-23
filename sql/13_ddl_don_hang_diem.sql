@@ -1,10 +1,10 @@
 ﻿/* =====================================================================
-   13_DDL_DonHang_Diem.sql — T13 (Võ Quốc Đại)
+   13_ddl_don_hang_diem.sql — T13 (Võ Quốc Đại)
    DDL 12 bảng nghiệp vụ: vận chuyển, thanh toán, chính sách điểm, điểm danh,
    khuyến mãi, giỏ hàng, đơn hàng, chi tiết, áp dụng khuyến mãi, đánh giá,
    tệp đánh giá, nhật ký xử lý đơn.
    Hệ quản trị: SQL Server 2019+ (compatibility level >= 130).
-   Chạy SAU DDL của Hưng (T11, T12) hoặc file 00_TAM_... khi chưa có.
+   Chạy SAU DDL của Hưng (T11, T12) hoặc file 00_tam_bang_nguoi_dung_san_pham.sql khi chưa có.
 
    Quy ước chung:
    - Mọi thời điểm lưu theo giờ Việt Nam (UTC+7), kiểu DATETIME2(0).
@@ -14,8 +14,8 @@
        CHO_LAY_HANG    Chờ lấy hàng        DANG_GIAO     Đang giao
        DA_GIAO         Đã giao             DA_HUY        Đã hủy
    - Ràng buộc kiểm tra được trong CREATE TABLE thì dùng CHECK/UNIQUE/FK,
-     KHÔNG dùng trigger (đúng yêu cầu BTL2). Ràng buộc liên bảng: xem 21_Trigger_Dai.sql
-     và các procedure ở 23_QuyTrinh_DonHang.sql.
+     KHÔNG dùng trigger (đúng yêu cầu BTL2). Ràng buộc liên bảng: xem 21_trigger_don_hang.sql
+     và các procedure ở 23_quy_trinh_don_hang.sql.
    ===================================================================== */
 SET NOCOUNT ON;
 GO

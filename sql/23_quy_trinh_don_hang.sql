@@ -1,10 +1,10 @@
 ﻿/* =====================================================================
-   23_QuyTrinh_DonHang.sql — T20, T21, T22 (Võ Quốc Đại)
+   23_quy_trinh_don_hang.sql — T20, T21, T22 (Võ Quốc Đại)
      sp_DiemDanhDangNhap      T20 — thưởng đăng nhập tối đa 1 lần/ngày (giờ VN)
      sp_TaoDonHang            T21 — giao dịch tạo đơn: điểm, voucher, tồn kho, chốt dữ liệu
      sp_CapNhatTrangThaiDon   T22 — chuyển trạng thái / hủy đơn, hoàn tồn đúng 1 lần, ghi nhật ký
    Mã lỗi: 50100–50129 tạo đơn, 50130–50149 trạng thái, 50180–50189 điểm danh.
-   Công thức: docs/T03_DacTa_CongThucDiem.md
+   Công thức: docs/dac-ta-nghiep-vu-diem.md
    ===================================================================== */
 SET NOCOUNT ON;
 GO

@@ -1,11 +1,11 @@
 ﻿/* =====================================================================
-   90_KiemThu_Dai.sql — T38 (Võ Quốc Đại)
+   90_kiem_thu_don_hang_diem.sql — T38 (Võ Quốc Đại)
    Kiểm thử: công thức điểm (ví dụ tính tay), điểm danh lặp, đặt đơn (điểm, voucher, tồn kho),
    chuyển trạng thái / hủy đơn (hoàn đúng 1 lần), quyền đánh giá (T24), chính sách mới,
    CRUD biến thể (T17–T19), fn_TinhDiemKhaDung = vw_DiemKhaDung.
-   Kiểm thử hai phiên đặt đồng thời: 91_DongThoi_PhienA.sql + 92_DongThoi_PhienB.sql.
+   Kiểm thử hai phiên đặt đồng thời: 91_kiem_thu_dong_thoi_phien_a.sql + 92_kiem_thu_dong_thoi_phien_b.sql.
 
-   CÁCH CHẠY: trên DB vừa nạp 00(hoặc DDL Hưng) → 13 → 20 → 21 → 22 → 23 → 30, chạy file này MỘT lần
+   CÁCH CHẠY: trên DB vừa nạp 00 (hoặc 11, 12 của Hưng) → 13 → 20 → 21 → 22 → 23 → 40, chạy file này MỘT lần
    trong cùng một phiên (dùng bảng tạm #). Mỗi ca in PASS/FAIL; cuối file có bảng tổng hợp.
    Script làm thay đổi dữ liệu (tạo đơn, đổi chính sách...) ⇒ muốn chạy lại thì nạp lại từ 13.
    Các ca dùng thời điểm hiện tại; voucher GIAM50K hết hạn 31/12/2026.

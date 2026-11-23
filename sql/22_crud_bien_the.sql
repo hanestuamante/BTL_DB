@@ -1,5 +1,5 @@
 ﻿/* =====================================================================
-   22_CRUD_BienThe.sql — T17, T18, T19 (Võ Quốc Đại)
+   22_crud_bien_the.sql — T17, T18, T19 (Võ Quốc Đại)
    Yêu cầu BTL2 mục 2.1: thủ tục thêm / sửa / xóa cho MỘT bảng: BIEN_THE_SAN_PHAM.
    Biến thể là thực thể yếu: luôn định danh bằng cặp (MaSanPham, MaBienTheNoiBo).
 

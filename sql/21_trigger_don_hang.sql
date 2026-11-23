@@ -1,5 +1,5 @@
 ﻿/* =====================================================================
-   21_Trigger_Dai.sql — Võ Quốc Đại
+   21_trigger_don_hang.sql — Võ Quốc Đại
    Trigger cho các ràng buộc LIÊN BẢNG (không kiểm tra được bằng CHECK/FK):
      trg_DanhGia_KiemTraQuyen        T24 — trigger nghiệp vụ chính (RB1)
      trg_ApDungKhuyenMai_KiemTra     T23 — RB5, RB6, RB8

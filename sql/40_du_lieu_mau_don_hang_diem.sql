@@ -1,5 +1,5 @@
 ﻿/* =====================================================================
-   30_DuLieuMau_Dai.sql — Dữ liệu mẫu miền của Đại (theo bảng phân chia dữ liệu mẫu)
+   40_du_lieu_mau_don_hang_diem.sql — Dữ liệu mẫu miền đơn hàng / điểm (Võ Quốc Đại)
    Bảng: CHINH_SACH_DIEM, DIEM_DANH_DANG_NHAP, PHUONG_THUC_VAN_CHUYEN, PHUONG_THUC_THANH_TOAN,
          KHUYEN_MAI, DON_HANG, CHI_TIET_DON_HANG, AP_DUNG_KHUYEN_MAI, NHAT_KY_XU_LY_DON,
          DANH_GIA, TEP_DANH_GIA (≥ 5 dòng có nghĩa mỗi bảng).
@@ -7,10 +7,10 @@
 
    Chạy NGAY SAU 13 → 20 → 21 → 22 → 23 trên các bảng rỗng (trigger đã có ⇒ dữ liệu mẫu cũng
    phải qua kiểm tra của trigger). Muốn nạp lại: chạy lại từ 13 (nhật ký không cho DELETE).
-   ID khách / nhân viên / địa chỉ / biến thể lấy theo 00_TAM_...; khi Bằng hợp nhất (T16)
+   ID khách / nhân viên / địa chỉ / biến thể lấy theo 00_tam_bang_nguoi_dung_san_pham.sql; khi Bằng hợp nhất (T16)
    cần đổi cho khớp dữ liệu thật.
 
-   Điểm khả dụng KỲ VỌNG sau khi nạp (kiểm thử ở 90_KiemThu_Dai.sql):
+   Điểm khả dụng KỲ VỌNG sau khi nạp (kiểm thử ở 90_kiem_thu_don_hang_diem.sql):
      KH1 = 4×500 (đăng nhập khai trương) + 38 (đơn 1) + 35 (đơn 4) − 1000 (đơn 4) = 1073
      KH2 = 89 (đơn 2) + 2×5 (đăng nhập) − 50 (đơn 8)                              =   49
      KH3 = 129 (đơn 3) + 5 (đăng nhập)                                             =  134

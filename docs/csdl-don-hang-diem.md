@@ -1,25 +1,27 @@
-# Mô tả phần CSDL của Võ Quốc Đại (dùng cho báo cáo BTL2)
+# CSDL đơn hàng, điểm và biến thể — mô tả cho báo cáo BTL2
 
-> Khanh có thể chép các mục dưới đây vào báo cáo (T43–T45). Mọi số liệu khớp với script trong `sql/dai/`.
+> Người viết: Võ Quốc Đại (T03, T13, T17–T24, T26, T27, T38).
+
+> Khanh có thể chép các mục dưới đây vào báo cáo (T43–T45). Mọi số liệu khớp với script trong `sql/`.
 > Hệ quản trị: **SQL Server 2019+** (cần compatibility level ≥ 130 cho `OPENJSON`, `STRING_SPLIT`; `STRING_AGG` dùng trong kiểm thử cần 2017+).
 
-## 1. Danh sách sản phẩm SQL của Đại
+## 1. Danh sách đối tượng SQL
 
 | Mã việc | Đối tượng | Loại | File | Mục BTL2 |
 |---|---|---|---|---|
-| T13 | 12 bảng đơn hàng / điểm / voucher / đánh giá / nhật ký | DDL | `13_DDL_DonHang_Diem.sql` | 1.1 |
-| T17 | `sp_ThemBienThe` | Procedure | `22_CRUD_BienThe.sql` | 2.1 (insert) |
-| T18 | `sp_SuaBienThe` | Procedure | `22_CRUD_BienThe.sql` | 2.1 (update) |
-| T19 | `sp_XoaBienThe` | Procedure | `22_CRUD_BienThe.sql` | 2.1 (delete) |
-| T20 | `sp_DiemDanhDangNhap` | Procedure | `23_QuyTrinh_DonHang.sql` | nghiệp vụ |
-| T21 | `sp_TaoDonHang` | Procedure (transaction) | `23_QuyTrinh_DonHang.sql` | nghiệp vụ |
-| T22 | `sp_CapNhatTrangThaiDon` | Procedure (transaction) | `23_QuyTrinh_DonHang.sql` | nghiệp vụ |
-| T23 | `fn_KiemTraVoucher`, `trg_ApDungKhuyenMai_KiemTra` | Function + trigger | `20_…`, `21_…` | 1.1 (RB5, 6, 8) |
-| T24 | `trg_DanhGia_KiemTraQuyen` | **Trigger nghiệp vụ** | `21_Trigger_Dai.sql` | **2.2.1** |
-| T26 | `vw_TienDonHang`, `vw_DiemKhaDung` | View | `20_View_Function_Diem.sql` | hỗ trợ |
-| T27 | `fn_TinhDiemKhaDung` | **Function (cursor, IF, LOOP)** | `20_View_Function_Diem.sql` | **2.4** |
-| — | `trg_DonHang_KiemTra`, `trg_NhatKy_ChiThem`, `trg_NhatKy_KiemTraNhanVien`, `trg_ChinhSachDiem_KiemTra`, `trg_DiemDanh_KiemTraChinhSach` | Trigger ràng buộc | `21_Trigger_Dai.sql` | 1.1 (ràng buộc ngữ nghĩa) |
-| T38 | Kiểm thử | Script | `90_…`, `91_…`, `92_…` | minh chứng |
+| T13 | 12 bảng đơn hàng / điểm / voucher / đánh giá / nhật ký | DDL | `13_ddl_don_hang_diem.sql` | 1.1 |
+| T17 | `sp_ThemBienThe` | Procedure | `22_crud_bien_the.sql` | 2.1 (insert) |
+| T18 | `sp_SuaBienThe` | Procedure | `22_crud_bien_the.sql` | 2.1 (update) |
+| T19 | `sp_XoaBienThe` | Procedure | `22_crud_bien_the.sql` | 2.1 (delete) |
+| T20 | `sp_DiemDanhDangNhap` | Procedure | `23_quy_trinh_don_hang.sql` | nghiệp vụ |
+| T21 | `sp_TaoDonHang` | Procedure (transaction) | `23_quy_trinh_don_hang.sql` | nghiệp vụ |
+| T22 | `sp_CapNhatTrangThaiDon` | Procedure (transaction) | `23_quy_trinh_don_hang.sql` | nghiệp vụ |
+| T23 | `fn_KiemTraVoucher`, `trg_ApDungKhuyenMai_KiemTra` | Function + trigger | `20_function_view_diem.sql`, `21_trigger_don_hang.sql` | 1.1 (RB5, 6, 8) |
+| T24 | `trg_DanhGia_KiemTraQuyen` | **Trigger nghiệp vụ** | `21_trigger_don_hang.sql` | **2.2.1** |
+| T26 | `vw_TienDonHang`, `vw_DiemKhaDung` | View | `20_function_view_diem.sql` | hỗ trợ |
+| T27 | `fn_TinhDiemKhaDung` | **Function (cursor, IF, LOOP)** | `20_function_view_diem.sql` | **2.4** |
+| — | `trg_DonHang_KiemTra`, `trg_NhatKy_ChiThem`, `trg_NhatKy_KiemTraNhanVien`, `trg_ChinhSachDiem_KiemTra`, `trg_DiemDanh_KiemTraChinhSach` | Trigger ràng buộc | `21_trigger_don_hang.sql` | 1.1 (ràng buộc ngữ nghĩa) |
+| T38 | Kiểm thử | Script | `90_…`, `91_…`, `92_kiem_thu_…` | minh chứng |
 
 Trigger thuộc tính dẫn xuất (2.2.2 — `SAN_PHAM.TongSoLuongDaBan`) là **T25 của Hưng**. Function thứ hai (2.4 — `fn_TinhTongThanhToan`) là **T29 của Bằng**.
 
@@ -106,7 +108,7 @@ Máy trạng thái RB15, RB16; hủy chỉ trước `DANG_GIAO`; hoàn tồn đ�
 
 Đơn COD bắt đầu ở `CHO_XAC_NHAN`, đơn trả trước bắt đầu ở `CHO_THANH_TOAN` (cột `PHUONG_THUC_THANH_TOAN.LaThanhToanKhiNhan`).
 
-## 6. Bảng ràng buộc ngữ nghĩa BTL1 thuộc phần Đại → cách hiện thực
+## 6. Ràng buộc ngữ nghĩa BTL1 liên quan → cách hiện thực
 
 | RB | Nội dung | Hiện thực |
 |---|---|---|
@@ -126,7 +128,7 @@ Máy trạng thái RB15, RB16; hủy chỉ trước `DANG_GIAO`; hoàn tồn đ�
 | mới | Mỗi khách thưởng đăng nhập ≤ 1 lần/ngày | PK `(MaKhachHang, NgayTinhThuongVN)` |
 | mới | Chính sách không chồng lấn, không sửa khi đã chốt | `trg_ChinhSachDiem_KiemTra` |
 
-## 7. Data dictionary — 12 bảng của Đại
+## 7. Data dictionary — 12 bảng đơn hàng / điểm
 
 Ký hiệu: PK khóa chính, FK khóa ngoại, NN = NOT NULL, N = cho phép NULL.
 

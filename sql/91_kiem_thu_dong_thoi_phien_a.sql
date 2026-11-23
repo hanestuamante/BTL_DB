@@ -1,11 +1,11 @@
 ﻿/* =====================================================================
-   91_DongThoi_PhienA.sql — T38: kiểm thử HAI PHIÊN ĐẶT ĐỒNG THỜI (phiên A)
+   91_kiem_thu_dong_thoi_phien_a.sql — T38: kiểm thử HAI PHIÊN ĐẶT ĐỒNG THỜI (phiên A)
    Mục tiêu: hai phiên cùng tiêu điểm của KH1 không thể tiêu vượt số điểm khả dụng.
 
-   Chuẩn bị: nạp lại DB từ 13 → 30 (KH1 có 1.073 điểm). Mở HAI cửa sổ truy vấn (SSMS/Azure Data Studio)
+   Chuẩn bị: nạp lại DB từ 13 → 40 (KH1 có 1.073 điểm). Mở HAI cửa sổ truy vấn (SSMS/Azure Data Studio)
    cùng kết nối tới DB.
      1. Chạy file này ở cửa sổ 1: phiên A đặt đơn dùng 1.000 điểm và GIỮ giao dịch 20 giây.
-     2. Trong 20 giây đó, chạy 92_DongThoi_PhienB.sql ở cửa sổ 2: phiên B cũng muốn dùng 1.000 điểm.
+     2. Trong 20 giây đó, chạy 92_kiem_thu_dong_thoi_phien_b.sql ở cửa sổ 2: phiên B cũng muốn dùng 1.000 điểm.
    Kỳ vọng:
      - Phiên B bị CHẶN tại câu khóa KHACH_HANG (UPDLOCK, HOLDLOCK) trong sp_TaoDonHang, không đọc
        được số điểm cũ 1.073.

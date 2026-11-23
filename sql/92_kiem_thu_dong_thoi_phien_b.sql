@@ -1,6 +1,6 @@
 ﻿/* =====================================================================
-   92_DongThoi_PhienB.sql — T38: kiểm thử HAI PHIÊN ĐẶT ĐỒNG THỜI (phiên B)
-   Chạy trong lúc 91_DongThoi_PhienA.sql đang WAITFOR (xem hướng dẫn ở file 91).
+   92_kiem_thu_dong_thoi_phien_b.sql — T38: kiểm thử HAI PHIÊN ĐẶT ĐỒNG THỜI (phiên B)
+   Chạy trong lúc 91_kiem_thu_dong_thoi_phien_a.sql đang WAITFOR (xem hướng dẫn ở file 91).
    Kỳ vọng: câu EXEC bị chờ đến khi A commit, sau đó báo lỗi 50119
    "Khách hàng chỉ có 73 điểm khả dụng, không đủ để dùng 1000 điểm."
    ===================================================================== */

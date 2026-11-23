@@ -1,7 +1,7 @@
 # T03 — Đặc tả nghiệp vụ điểm, giảm giá và hủy đơn
 
 > Người phụ trách: **Võ Quốc Đại** · Người rà văn bản: Khanh · Kiểm tra khả thi UI: Bằng
-> Căn cứ: Tài liệu 1 — Điều chỉnh BTL1 (mục 2–4). Hiện thực ở `sql/dai/20_View_Function_Diem.sql`, `sql/dai/23_QuyTrinh_DonHang.sql`.
+> Căn cứ: Tài liệu 1 — Điều chỉnh BTL1 (mục 2–4). Hiện thực ở `sql/20_function_view_diem.sql`, `sql/23_quy_trinh_don_hang.sql`.
 >
 > **Lưu ý:** các con số chính sách (1%, 100đ/điểm, 30%, 5 điểm/ngày) là **đề xuất của nhóm** để minh họa và kiểm thử,
 > không phải chính sách chính thức của Shopee hay dữ liệu từ đề bài. Cần xác nhận với giảng viên nếu lớp quy định khác.
@@ -75,7 +75,7 @@ Hiện thực: `vw_TienDonHang` trả về đủ H, V, U, G, F, A, T, E dự ki�
 
 "Ngày" thưởng đăng nhập tính theo giờ Việt Nam (UTC+7): toàn bộ thời điểm trong CSDL được lưu theo giờ VN (`fn_ThoiDiemVN()`).
 
-**Chống tiêu vượt khi hai phiên đặt cùng lúc:** `sp_TaoDonHang` khóa dòng `KHACH_HANG` của khách bằng `UPDLOCK, HOLDLOCK` trước khi tính điểm khả dụng ⇒ các giao dịch tiêu điểm của cùng khách chạy tuần tự (kiểm thử `91_DongThoi_PhienA.sql` + `92_DongThoi_PhienB.sql`).
+**Chống tiêu vượt khi hai phiên đặt cùng lúc:** `sp_TaoDonHang` khóa dòng `KHACH_HANG` của khách bằng `UPDLOCK, HOLDLOCK` trước khi tính điểm khả dụng ⇒ các giao dịch tiêu điểm của cùng khách chạy tuần tự (kiểm thử `91_kiem_thu_dong_thoi_phien_a.sql` + `92_kiem_thu_dong_thoi_phien_b.sql`).
 
 ## 6. Ví dụ tính tay (khớp dữ liệu mẫu đơn số 4 và ca kiểm thử A1, C12)
 

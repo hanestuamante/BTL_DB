@@ -1,10 +1,10 @@
 ﻿/* =====================================================================
-   20_View_Function_Diem.sql — Võ Quốc Đại
+   20_function_view_diem.sql — Võ Quốc Đại
    - fn_ThoiDiemVN, fn_ChinhSachHieuLuc : hàm tiện ích
    - fn_KiemTraVoucher                  : T23 (kiểm tra voucher)
    - vw_TienDonHang, vw_DiemKhaDung     : T26 (view tính điểm khả dụng)
    - fn_TinhDiemKhaDung                 : T27 (hàm có cursor, IF, LOOP, validate tham số)
-   Công thức: docs/T03_DacTa_CongThucDiem.md
+   Công thức: docs/dac-ta-nghiep-vu-diem.md
    ===================================================================== */
 SET NOCOUNT ON;
 GO
@@ -170,7 +170,7 @@ GO
        -1 : tham số NULL hoặc không dương
        -2 : mã không phải là khách hàng
    (Hàm trong SQL Server không được THROW nên dùng mã âm để báo tham số sai.)
-   Kết quả phải BẰNG cột DiemKhaDung của vw_DiemKhaDung (kiểm thử ở 90_KiemThu_Dai.sql).
+   Kết quả phải BẰNG cột DiemKhaDung của vw_DiemKhaDung (kiểm thử ở 90_kiem_thu_don_hang_diem.sql).
    --------------------------------------------------------------------- */
 CREATE OR ALTER FUNCTION dbo.fn_TinhDiemKhaDung (@MaKhachHang INT)
 RETURNS INT
