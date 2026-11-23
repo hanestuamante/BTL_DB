@@ -9,7 +9,7 @@
 | Mốc | Điều kiện hoàn thành | Trạng thái |
 |---|---|---|
 | M1 — Chốt thiết kế | T03–T08 thống nhất; không đổi khóa / công thức tùy tiện sau mốc này | ⬜ (T03 đã có; T04–T08 đã viết ở `docs/csdl-nguoi-dung-san-pham.md`, chờ Đại, Khanh rà) |
-| M2 — CSDL chạy độc lập | DDL, ràng buộc, dữ liệu mẫu và routine chạy được từ DB rỗng | 🟡 đạt trên nhánh `hung/csdl-nguoi-dung-san-pham` (23/11): chạy hết từ DB rỗng, kiểm thử 46 + 15 + 64 ca đều PASS; chờ gộp PR |
+| M2 — CSDL chạy độc lập | DDL, ràng buộc, dữ liệu mẫu và routine chạy được từ DB rỗng | 🟡 đạt trên nhánh `hung/csdl-nguoi-dung-san-pham` (23/11): chạy hết từ DB rỗng, kiểm thử 50 + 18 + 64 ca đều PASS; chờ gộp PR |
 | M3 — Báo cáo sơ bộ | Thiết kế, bảng, dữ liệu, phân công, tiến độ theo mẫu lớp (buổi thực hành thứ 5) | ⬜ |
 | M4 — Tích hợp | UI kết nối DB thật; chạy đủ ca kiểm thử và xử lý lỗi | ⬜ |
 | M5 — Nộp cuối | PDF, source, SQL, README, dữ liệu demo, kịch bản bảo vệ đồng bộ (buổi thứ 6) | ⬜ |
@@ -27,10 +27,10 @@
 | T11 | DDL người dùng, vai trò, địa chỉ, nhân viên, danh mục, dữ liệu nền | 🟡 `sql/11_ddl_nguoi_dung.sql`, `sql/38_du_lieu_mau_nguoi_dung.sql` |
 | T12 | DDL sản phẩm, biến thể, bảng phụ | 🟡 `sql/12_ddl_san_pham.sql` |
 | T14 | Đối chiếu đủ bảng, PK/FK, UNIQUE, NOT NULL, DEFAULT, CHECK | 🟡 nhóm K của `sql/90_kiem_thu_cau_truc_rang_buoc.sql` |
-| T15 | Ràng buộc liên bảng: tuổi khách, total specialization, cây danh mục, địa chỉ | 🟡 `sql/15_rang_buoc_lien_bang.sql` |
+| T15 | Ràng buộc liên bảng: tuổi khách, total specialization, cây danh mục, địa chỉ | 🟡 `sql/15_rang_buoc_lien_bang.sql` (địa chỉ RB13, RB14 khai báo trong DDL 11, 13) |
 | T25 | Trigger duy trì SAN_PHAM.TongSoLuongDaBan | 🟡 `sql/25_trigger_dan_xuat.sql` |
-| T35 | Kiểm thử khóa ghép, NULL, miền giá trị, vai trò, cây danh mục, địa chỉ | 🟡 `sql/90_kiem_thu_cau_truc_rang_buoc.sql` (46 ca, PASS) |
-| T37 | Kiểm thử trigger nghiệp vụ / dẫn xuất một dòng và nhiều dòng | 🟡 `sql/90_kiem_thu_dan_xuat_nghiep_vu.sql` (15 ca, PASS) |
+| T35 | Kiểm thử khóa ghép, NULL, miền giá trị, vai trò, cây danh mục, địa chỉ | 🟡 `sql/90_kiem_thu_cau_truc_rang_buoc.sql` (50 ca, PASS) |
+| T37 | Kiểm thử trigger nghiệp vụ / dẫn xuất một dòng và nhiều dòng | 🟡 `sql/90_kiem_thu_dan_xuat_nghiep_vu.sql` (18 ca, PASS) |
 
 ## B. Võ Quốc Đại — nghiệp vụ điểm, đơn hàng, CRUD biến thể
 
@@ -114,7 +114,7 @@ Những điểm các phần phải khớp nhau. Ai thay đổi điều gì trong
 
 | Việc | Ghi chú |
 |---|---|
-| Chạy toàn bộ script trên một DB thống nhất | Đã chạy 23/11 trên SQL Server 2022 (Docker, máy Hưng) theo lệnh README: từ DB rỗng chạy hết, 64 + 46 + 15 ca PASS. Máy Mac chưa chạy thử. |
+| Chạy toàn bộ script trên một DB thống nhất | Đã chạy 23/11 trên SQL Server 2022 (Docker, máy Hưng) theo lệnh README: từ DB rỗng chạy hết, 64 + 50 + 18 ca PASS. Máy Mac chưa chạy thử. |
 | Kiểm thử hai phiên đặt đồng thời (`91_…` + `92_…`) | Đã chạy 23/11: phiên B bị chặn 17 giây rồi bị từ chối 50119, KH1 còn 73 điểm (đúng kỳ vọng). |
 | Xác nhận chính sách điểm với giảng viên | r = 1%, v = 100đ/điểm, c = 30%, L = 5 điểm/ngày là đề xuất; cách hoàn điểm khi hủy; điểm không giảm phí vận chuyển. |
 | Xác nhận hạn nộp | Mô tả BTL2 ghi hạn LMS năm 2025; cần xác nhận hạn hiện hành và lịch buổi thực hành thứ 5, 6. |

@@ -34,7 +34,7 @@ Thứ tự dưới đây Hưng đã chốt ở T10 (23/11/2026). Các dòng "ch�
 | 11 | `11_ddl_nguoi_dung.sql` | Người dùng, vai trò, địa chỉ, nhân viên, danh mục (T11) | Hưng | đã viết |
 | 12 | `12_ddl_san_pham.sql` | Sản phẩm, biến thể, bảng phụ (T12) | Hưng | đã viết |
 | 13 | `13_ddl_don_hang_diem.sql` | Đơn hàng, chi tiết, giỏ, voucher, đánh giá, nhật ký, chính sách điểm, điểm danh (T13) | Đại | đã viết |
-| 15 | `15_rang_buoc_lien_bang.sql` | Tuổi khách, total specialization, cây danh mục, địa chỉ (T15). Từ file này trở đi, người dùng chỉ được tạo qua `sp_TaoNguoiDung` | Hưng | đã viết |
+| 15 | `15_rang_buoc_lien_bang.sql` | Tuổi khách, total specialization, cây danh mục (T15); ràng buộc địa chỉ RB13, RB14 đã khai báo trong DDL 11 và 13. Từ file này trở đi, người dùng chỉ được tạo qua `sp_TaoNguoiDung` | Hưng | đã viết |
 | 20 | `20_function_view_diem.sql` | `fn_KiemTraVoucher`, `vw_TienDonHang`, `vw_DiemKhaDung`, `fn_TinhDiemKhaDung` (T23, T26, T27) | Đại | đã viết |
 | 21 | `21_trigger_don_hang.sql` | Trigger quyền đánh giá (T24) và các trigger ràng buộc đơn hàng / voucher / chính sách | Đại | đã viết |
 | 22 | `22_crud_bien_the.sql` | `sp_ThemBienThe`, `sp_SuaBienThe`, `sp_XoaBienThe` (T17–T19) | Đại | đã viết |
@@ -46,7 +46,7 @@ Thứ tự dưới đây Hưng đã chốt ở T10 (23/11/2026). Các dòng "ch�
 | 38 | `38_du_lieu_mau_nguoi_dung.sql` | Dữ liệu mẫu miền người dùng, vai trò, địa chỉ | Hưng | đã viết |
 | 39 | `39_du_lieu_mau_san_pham.sql` | Dữ liệu mẫu miền danh mục, thương hiệu, sản phẩm, biến thể (T16) | Bằng | tạm (Hưng chuyển từ file 00 cũ; Bằng mở rộng) |
 | 40 | `40_du_lieu_mau_don_hang_diem.sql` | Dữ liệu mẫu miền đơn hàng, điểm, voucher, đánh giá, nhật ký | Đại | đã viết |
-| 90 | `90_kiem_thu_<mo_ta>.sql` | Kiểm thử, chạy theo thứ tự chữ cái. File chạy trước file khác không được để lại thay đổi dữ liệu (ca nào sửa dữ liệu thì bọc trong `BEGIN TRAN … ROLLBACK`) | theo module | có phần đơn hàng / điểm |
+| 90 | `90_kiem_thu_<mo_ta>.sql` | Kiểm thử, chạy theo thứ tự chữ cái. File chạy trước file khác không được để lại thay đổi dữ liệu (ca nào sửa dữ liệu thì bọc trong `BEGIN TRAN … ROLLBACK`; riêng số IDENTITY đã cấp thì không lấy lại được) | theo module | có: cấu trúc – ràng buộc, dẫn xuất – nghiệp vụ (Hưng); đơn hàng – điểm (Đại) |
 | 91, 92 | `91_…`, `92_…` | Kiểm thử đồng thời, chạy tay ở hai phiên | Đại | đã viết |
 
 Mỗi miền dữ liệu mẫu một file (38 → 39 → 40, đúng thứ tự khóa ngoại). Bằng chịu trách nhiệm hợp nhất và bảo đảm mỗi bảng có ít nhất 5 dòng có nghĩa (T16). Dữ liệu mẫu chạy **sau** trigger để chính dữ liệu mẫu cũng được trigger kiểm tra.
@@ -94,7 +94,7 @@ q -b -Q "IF DB_ID('BTL2') IS NOT NULL BEGIN ALTER DATABASE BTL2 SET SINGLE_USER 
 for f in sql/[0-8]*.sql sql/90_*.sql; do echo "== $f"; q -d BTL2 -f 65001 -b -i "$f" || break; done
 ```
 
-Kết quả đúng: vòng lặp chạy hết, cuối mỗi file kiểm thử có bảng tổng hợp `SoFail = 0`.
+Kết quả đúng: vòng lặp chạy hết, cuối mỗi file kiểm thử có bảng tổng hợp `SoFail = 0`. Hai file kiểm thử của Hưng có ca FAIL thì báo lỗi 50399 và vòng lặp dừng ngay tại file đó.
 
 Công cụ giao diện: SSMS (Windows) hoặc VS Code + extension MSSQL / DBeaver (Mac), kết nối `localhost`, user `sa`, mở và Execute lần lượt từng file theo số. DB cần `COMPATIBILITY_LEVEL >= 130` (mặc định của SQL Server 2022 là 160).
 

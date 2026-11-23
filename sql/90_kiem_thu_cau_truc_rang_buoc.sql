@@ -6,6 +6,9 @@
    CÁCH CHẠY: chạy cùng các file khác theo lệnh "Chạy toàn bộ" ở README.
    File chạy TRƯỚC 90_kiem_thu_don_hang_diem.sql nên KHÔNG được để lại thay đổi dữ liệu:
    mọi ca có sửa dữ liệu đều bọc trong BEGIN TRAN … ROLLBACK; ca K9 ở cuối kiểm lại số dòng.
+   Riêng số IDENTITY đã cấp trong ca bị ROLLBACK thì không lấy lại được (ca DC4 tạo đơn), nên
+   mã đơn mới ở file chạy sau sẽ nhảy số; file của Đại đọc mã đơn qua OUTPUT nên không bị ảnh hưởng.
+   Có ca FAIL thì cuối file THROW 50399 để vòng chạy của README dừng lại.
    Ca kỳ vọng lỗi chỉ sai đúng một cột; các cột khác hợp lệ và chưa trùng (mã 9xx, kt.*@mail.vn).
    Mã 50399 dành riêng cho lỗi so sánh trong kiểm thử.
    ===================================================================== */
@@ -298,9 +301,20 @@ ROLLBACK;';
 EXEC #KyVongOK 'V9', N'Nhân viên NV02 (sinh 1998) thêm vai trò khách', N'BEGIN TRAN;
 INSERT dbo.KHACH_HANG (MaNguoiDung) VALUES (5);
 ROLLBACK;';
-EXEC #KyVongLoi 'V13', N'Chuyển vai trò khách cuối cùng sang người khác (UPDATE MaNguoiDung)', 50224, N'BEGIN TRAN;
+EXEC #KyVongLoi 'V13', N'Chuyển vai trò khách sang người khác (UPDATE MaNguoiDung)', 50226, N'BEGIN TRAN;
 EXEC dbo.sp_TaoNguoiDung 910, ''kt.v13'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v13@mail.vn'', NULL, NULL, ''2000-01-01'', 1;
 UPDATE dbo.KHACH_HANG SET MaNguoiDung = 5 WHERE MaNguoiDung = 910;
+ROLLBACK;';
+EXEC #KyVongLoi 'V14', N'Cờ phiên còn sót từ giao dịch cũ không mở được INSERT thẳng', 50223, N'BEGIN TRAN;
+EXEC sys.sp_set_session_context @key = N''BTL2_TaoNguoiDung'', @value = 1;
+INSERT dbo.NGUOI_DUNG (MaNguoiDung, TenDangNhap, MatKhauBam, Ho, Ten, Email) VALUES (912, ''kt.v14'', ''sha256$kt'', N''Kiểm'', N''Thử'', ''kt.v14@mail.vn'');
+ROLLBACK;';
+EXEC sys.sp_set_session_context @key = N'BTL2_TaoNguoiDung', @value = NULL;
+EXEC #KyVongLoi 'V15', N'Chuyển vai trò nhân viên NV01 sang người dùng 1 (giữ được lịch sử RB16)', 50226, N'BEGIN TRAN;
+UPDATE dbo.NHAN_VIEN SET MaNguoiDung = 1 WHERE MaNhanVien = ''NV01'';
+ROLLBACK;';
+EXEC #KyVongOK 'V16', N'Sửa lương nhân viên (không đổi MaNguoiDung) vẫn được', N'BEGIN TRAN;
+UPDATE dbo.NHAN_VIEN SET Luong = Luong + 500000 WHERE MaNhanVien = ''NV02'';
 ROLLBACK;';
 GO
 
@@ -320,6 +334,12 @@ ROLLBACK;';
 EXEC #KyVongOK 'M5', N'Thêm danh mục con mới dưới danh mục 2', N'BEGIN TRAN;
 INSERT dbo.DANH_MUC (MaDanhMuc, TenDanhMuc, MaDanhMucCha) VALUES (90, N''Áo khoác'', 2);
 ROLLBACK;';
+EXEC #KyVongLoi 'M6', N'Vòng dài 60 cấp (100 ← 101 ← … ← 159, rồi đặt cha của 100 là 159)', 50240, N'BEGIN TRAN;
+WITH So AS (SELECT TOP (60) ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS n FROM sys.all_objects)
+INSERT dbo.DANH_MUC (MaDanhMuc, TenDanhMuc, MaDanhMucCha)
+SELECT 100 + n, CONCAT(N''Danh mục thử '', n), CASE WHEN n = 0 THEN NULL ELSE 99 + n END FROM So;
+UPDATE dbo.DANH_MUC SET MaDanhMucCha = 159 WHERE MaDanhMuc = 100;
+ROLLBACK;';
 GO
 
 /* =====================================================================
@@ -337,4 +357,8 @@ GO
 /* ---------- TỔNG HỢP ---------- */
 SELECT COUNT(*) AS TongSoCa, SUM(CAST(Dat AS INT)) AS SoPass, COUNT(*) - SUM(CAST(Dat AS INT)) AS SoFail FROM #KQ;
 SELECT Ma, MoTa, ChiTiet FROM #KQ WHERE Dat = 0 ORDER BY STT;
+GO
+/* Có ca FAIL thì báo lỗi để vòng "Chạy toàn bộ" (sqlcmd -b) dừng ngay tại file này */
+IF EXISTS (SELECT 1 FROM #KQ WHERE Dat = 0)
+    THROW 50399, N'90_kiem_thu_cau_truc_rang_buoc.sql có ca FAIL, xem bảng tổng hợp ở trên.', 1;
 GO

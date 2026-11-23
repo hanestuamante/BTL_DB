@@ -3,6 +3,7 @@
    Trigger duy trì thuộc tính dẫn xuất SAN_PHAM.TongSoLuongDaBan (BTL2 mục 2.2.2):
      trg_ChiTietDonHang_TongDaBan   AFTER INSERT, UPDATE, DELETE trên CHI_TIET_DON_HANG
      trg_DonHang_TongDaBan          AFTER UPDATE (TrangThaiDon) trên DON_HANG
+     trg_SanPham_KiemTraDaBan       AFTER INSERT, UPDATE trên SAN_PHAM: không ghi tay giá trị sai (50250)
 
    Bất biến: với mọi sản phẩm p,
      TongSoLuongDaBan(p) = Σ SoLuongMua của các dòng chi tiết thuộc p nằm trong đơn có TrangThaiDon = 'DA_GIAO'.
@@ -10,7 +11,8 @@
    Cách làm: lấy TẬP sản phẩm bị ảnh hưởng rồi TÍNH LẠI tổng của đúng các sản phẩm đó,
    thay vì cộng / trừ chênh lệch. Nhờ vậy thao tác nhiều dòng, đổi sản phẩm của một dòng,
    hay vừa đổi số lượng vừa đổi đơn đều đúng mà không phải xử lý riêng từng trường hợp.
-   Trigger trên chi tiết bắt cả INSERT vì dữ liệu mẫu chèn thẳng đơn DA_GIAO rồi mới chèn chi tiết.
+   Trigger trên chi tiết bắt cả INSERT: thêm dòng vào một đơn đã giao (ví dụ dữ liệu mẫu chèn thẳng
+   đơn DA_GIAO rồi mới chèn chi tiết) phải làm tổng đổi ngay; ca DX2 kiểm điều này.
    Chạy SAU 12 (SAN_PHAM) và 13 (DON_HANG, CHI_TIET_DON_HANG).
    ===================================================================== */
 SET QUOTED_IDENTIFIER ON;
@@ -97,5 +99,35 @@ BEGIN
                    AND d.TrangThaiDon = 'DA_GIAO') x;
 END;
 GO
-PRINT N'25: Đã tạo 2 trigger duy trì SAN_PHAM.TongSoLuongDaBan.';
+/* ---------------------------------------------------------------------
+   trg_SanPham_KiemTraDaBan — Người viết: Khưu Huỳnh Gia Hưng
+   TongSoLuongDaBan là thuộc tính dẫn xuất: chỉ chấp nhận giá trị bằng đúng định nghĩa.
+   Ghi tay giá trị sai (UPDATE, hoặc INSERT sản phẩm mới với số khác 0) bị từ chối (50250).
+   Ghi lại đúng giá trị (như lệnh đồng bộ ở cuối file 40, hay chính hai trigger trên) vẫn được.
+   Chỉ kiểm khi câu lệnh đụng tới cột này, nên sửa giá, tên sản phẩm không tốn thêm gì.
+   --------------------------------------------------------------------- */
+CREATE OR ALTER TRIGGER dbo.trg_SanPham_KiemTraDaBan
+ON dbo.SAN_PHAM
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT UPDATE(TongSoLuongDaBan) RETURN;
+
+    DECLARE @Loi NVARCHAR(400);
+    SELECT TOP (1) @Loi = CONCAT(N'TongSoLuongDaBan của sản phẩm ', i.MaSanPham,
+                                 N' là thuộc tính dẫn xuất, phải bằng ', ISNULL(x.SoLuong, 0),
+                                 N' (tổng số lượng trong các đơn đã giao), không ghi tay giá trị ', i.TongSoLuongDaBan, N'.')
+    FROM inserted i
+    OUTER APPLY (SELECT SUM(c.SoLuongMua) AS SoLuong
+                 FROM dbo.CHI_TIET_DON_HANG c
+                 JOIN dbo.DON_HANG d ON d.MaDonHang = c.MaDonHang
+                 WHERE c.MaSanPham = i.MaSanPham
+                   AND d.TrangThaiDon = 'DA_GIAO') x
+    WHERE i.TongSoLuongDaBan <> ISNULL(x.SoLuong, 0);
+
+    IF @Loi IS NOT NULL THROW 50250, @Loi, 1;
+END;
+GO
+PRINT N'25: Đã tạo 3 trigger duy trì và bảo vệ SAN_PHAM.TongSoLuongDaBan.';
 GO

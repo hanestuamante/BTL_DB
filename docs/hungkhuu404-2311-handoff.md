@@ -15,6 +15,8 @@
 | Dữ liệu mẫu | Mỗi miền một file: `38` người dùng (Hưng), `39` sản phẩm (Bằng), `40` đơn hàng – điểm (Đại) | Nếu cùng tên `40_du_lieu_mau_*`, file chạy theo thứ tự chữ cái nên dữ liệu đơn hàng sẽ chạy trước người dùng và vỡ khóa ngoại |
 | File kiểm thử | `90_kiem_thu_<mo_ta>.sql`, chạy theo thứ tự chữ cái; file chạy trước file khác không được để lại thay đổi dữ liệu | File của Đại chạy cuối và cần dữ liệu mẫu còn nguyên |
 | Tạo người dùng | Sau khi có file `15`, **chỉ qua `sp_TaoNguoiDung`**; INSERT thẳng vào `NGUOI_DUNG` bị trigger chặn (lỗi 50223) | Bảo đảm mỗi người dùng luôn là khách hàng hoặc nhân viên (total specialization) |
+| Vai trò | Không đổi `MaNguoiDung` của một dòng `KHACH_HANG` / `NHAN_VIEN` (lỗi 50226); muốn đổi người thì xóa vai trò cũ, tạo vai trò mới | Nhật ký xử lý đơn ghi theo mã nhân viên; chuyển mã sang người khác làm sai lịch sử (RB16) |
+| `SAN_PHAM.TongSoLuongDaBan` | Chỉ trigger T25 cập nhật; ghi tay giá trị khác định nghĩa bị chặn (lỗi 50250) | Thuộc tính dẫn xuất, không được lệch với số trong các đơn đã giao |
 | Mã lỗi | Hưng dùng 50200 – 50399 | Theo bảng dải mã trong README |
 
 ## 2. Kết quả chạy thật lần đầu (23/11/2026)
@@ -30,6 +32,13 @@ Sau bước 3 (DDL thật thay file `00`): `90_kiem_thu_cau_truc_rang_buoc.sql` 
 Sau bước 4 (ràng buộc liên bảng, `sp_TaoNguoiDung`): file kiểm thử của Hưng đạt 46/46, file của Đại vẫn 64/64.
 Sau bước 5 (trigger T25): `90_kiem_thu_dan_xuat_nghiep_vu.sql` đạt 15/15. Sau khi cả 64 ca của Đại chạy xong (tạo, giao, hủy đơn thật), `TongSoLuongDaBan` của cả 6 sản phẩm vẫn bằng giá trị tính lại.
 Kiểm thử hai phiên `91` + `92` của Đại: phiên B bị chặn 17 giây rồi bị từ chối 50119, KH1 còn 73 điểm, đúng kỳ vọng.
+Sau một lượt rà soát độc lập (23/11), Hưng sửa 4 lỗ hổng và thêm 7 ca kiểm thử:
+- cờ phiên của `sp_TaoNguoiDung` còn sót khi lệnh bị hủy;
+- vòng danh mục dài hơn 50 cấp không bị bắt;
+- ghi tay sai `TongSoLuongDaBan` vẫn được;
+- chuyển vai trò sang người khác vẫn được.
+
+Hai file kiểm thử của Hưng giờ đạt 50/50 và 18/18, file của Đại vẫn 64/64.
 
 ## 3. Phần của Hưng: thứ tự làm và trạng thái
 
@@ -52,12 +61,14 @@ Kiểm thử hai phiên `91` + `92` của Đại: phiên B bị chặn 17 giây 
 - Không cần sửa code. File `00` đã bị xóa ở bước 3; chú thích ở `sql/13_ddl_don_hang_diem.sql` dòng 7 và `sql/40_du_lieu_mau_don_hang_diem.sql` dòng 10 còn nhắc file `00`, Đại sửa lại cho khớp (dữ liệu người dùng giờ ở `38`, sản phẩm ở `39`, mã giữ nguyên).
 - Bước 2 xong thì rà `docs/csdl-nguoi-dung-san-pham.md` (M1): khóa, kiểu cột và tên ràng buộc có khớp file `13` và các routine không.
 - Bước 7: Hưng mở issue review T21 (`sp_TaoDonHang`, `sp_CapNhatTrangThaiDon`) theo 5 điểm: rollback, thứ tự khóa, địa chỉ ghép, khóa ghép biến thể, tổng thanh toán không âm.
+- Gợi ý: thêm vào cuối `90_kiem_thu_don_hang_diem.sql` câu `IF EXISTS (SELECT 1 FROM #KQ WHERE Dat = 0) THROW 50199, …` để vòng "Chạy toàn bộ" dừng khi có ca FAIL, giống hai file của Hưng.
 - Code của Đại đã chạy thật lần đầu ngày 23/11 và đạt 64/64, `91` + `92` cũng đạt. Đại cập nhật cột trạng thái phần mình trong `docs/phan-cong-va-tien-do.md` (dòng chú thích "chưa chạy trên SQL Server" đã cũ).
 
 ### Bằng
 - File `39_du_lieu_mau_san_pham.sql` đã có dữ liệu danh mục, thương hiệu, sản phẩm, hình ảnh, biến thể (chuyển nguyên từ file `00`). Bằng mở rộng file này ở T16, giữ nguyên ID 1–6 của sản phẩm và 10 biến thể, vì file `40` của Đại dựa vào chúng.
 - `GIO_HANG` hiện chưa có dòng nào; cần ít nhất 5 dòng ở T16.
 - Dữ liệu người dùng mới (nếu cần) phải gọi `EXEC dbo.sp_TaoNguoiDung …` thay vì INSERT thẳng.
+- Giao diện không cho sửa `TongSoLuongDaBan` (ghi tay giá trị sai bị chặn, lỗi 50250) và không đổi `MaNguoiDung` của khách hàng hay nhân viên (lỗi 50226).
 
 ### Khanh
 - **Chờ bước 2:** mục "Thay đổi so với BTL1" trong `docs/csdl-nguoi-dung-san-pham.md` liệt kê những đoạn BTL1 cần sửa ở T09 (20 → 22 bảng, bỏ `DiemTichLuy`, biến thể thành thực thể yếu, `TongSoLuongDaBan` được lưu bằng trigger).

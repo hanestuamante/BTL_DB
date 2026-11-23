@@ -37,14 +37,18 @@ Hưng phụ trách 10 bảng: `NGUOI_DUNG`, `SDT_LIEN_LAC`, `KHACH_HANG`, `NHAN_
 
 **Overlapping** không cần thêm gì: cùng một `MaNguoiDung` được phép có mặt ở cả hai bảng.
 
-**Total.** SQL Server không có ràng buộc hoãn tới cuối giao dịch, nên không thể bắt "phải có dòng ở bảng con" ngay lúc chèn `NGUOI_DUNG`. Nhóm bảo đảm điều này bằng bốn cơ chế:
+**Total.** SQL Server không có ràng buộc hoãn tới cuối giao dịch, nên không thể bắt "phải có dòng ở bảng con" ngay lúc chèn `NGUOI_DUNG`. Nhóm bảo đảm điều này bằng năm cơ chế:
 
 1. **Chỉ tạo người dùng qua `sp_TaoNguoiDung`.** Thủ tục chèn `NGUOI_DUNG` và ít nhất một vai trò trong cùng một giao dịch.
    - Không chọn vai trò nào: lỗi 50222.
    - Có `MaNhanVien` nhưng thiếu chức vụ, lương hoặc ngày vào làm: lỗi 50225.
-2. **Chặn tạo người dùng không qua thủ tục.** Trigger `trg_NguoiDung_KiemTra` báo lỗi 50223. Thủ tục tự đánh dấu mình bằng `SESSION_CONTEXT(N'BTL2_TaoNguoiDung')`, nên trigger phân biệt được.
-3. **Không xóa được vai trò cuối cùng.** Trigger `trg_KhachHang_KiemTraVaiTro` và `trg_NhanVien_KiemTraVaiTro` chặn việc xóa hoặc chuyển vai trò cuối cùng của một người dùng vẫn còn tồn tại (lỗi 50224).
-4. **Xóa hẳn một người dùng thì xóa dòng `NGUOI_DUNG`.** Khóa ngoại `CASCADE` xóa luôn vai trò và số điện thoại liên lạc. Nếu người dùng đã có địa chỉ, đơn hàng hoặc nhật ký xử lý đơn, khóa ngoại của các bảng đó chặn việc xóa, nhờ vậy lịch sử được giữ.
+2. **Chặn tạo người dùng không qua thủ tục.** Trigger `trg_NguoiDung_KiemTra` báo lỗi 50223.
+   - Thủ tục ghi mã của giao dịch hiện tại vào `SESSION_CONTEXT(N'BTL2_TaoNguoiDung')`. Trigger chỉ cho chèn khi giá trị này khớp với giao dịch đang chạy.
+   - Nhờ vậy, nếu lệnh gọi thủ tục bị hủy giữa chừng (ví dụ hết thời gian chờ) mà cờ còn sót lại, cờ cũng không mở đường cho lệnh chèn ở giao dịch sau.
+   - Giới hạn: ai có quyền tự gọi `sp_set_session_context` vẫn giả được cờ. Trong phạm vi bài, mọi ứng dụng đều tạo người dùng qua thủ tục.
+3. **Không xóa được vai trò cuối cùng.** Trigger `trg_KhachHang_KiemTraVaiTro` và `trg_NhanVien_KiemTraVaiTro` chặn việc xóa vai trò cuối cùng của một người dùng vẫn còn tồn tại (lỗi 50224).
+4. **Không chuyển vai trò sang người khác.** Hai trigger trên chặn việc đổi `MaNguoiDung` của một dòng vai trò (lỗi 50226). Lý do: `NHAT_KY_XU_LY_DON` ghi theo `MaNhanVien`; nếu chuyển mã nhân viên sang người khác, lịch sử xử lý đơn sẽ sai và RB16 có thể bị vi phạm ngược về quá khứ.
+5. **Xóa hẳn một người dùng thì xóa dòng `NGUOI_DUNG`.** Khóa ngoại `CASCADE` xóa luôn vai trò và số điện thoại liên lạc. Nếu người dùng đã có địa chỉ, giỏ hàng, điểm danh, đơn hàng hoặc nhật ký xử lý đơn, khóa ngoại của các bảng đó chặn việc xóa, nhờ vậy lịch sử được giữ.
 
 ## 4. T08 — Data dictionary của 10 bảng
 
@@ -121,7 +125,7 @@ Cả 10 bảng có đúng **6 cột cho phép NULL**: `NGUOI_DUNG.SdtXacThuc`, `
 | TenSanPham | NVARCHAR(200) | NN | | |
 | GiaNiemYet | DECIMAL(14,2) | NN | `CK_SAN_PHAM_GiaNiemYet`: > 0 | mốc 50–200% cho giá biến thể (`sp_ThemBienThe`) |
 | MoTaChiTiet | NVARCHAR(MAX) | N | | không bắt buộc |
-| TongSoLuongDaBan | INT | NN | `DF_SAN_PHAM_DaBan` = 0; `CK_SAN_PHAM_DaBan`: ≥ 0 | thuộc tính dẫn xuất **được lưu**, trigger T25 duy trì |
+| TongSoLuongDaBan | INT | NN | `DF_SAN_PHAM_DaBan` = 0; `CK_SAN_PHAM_DaBan`: ≥ 0 | thuộc tính dẫn xuất **được lưu**, trigger T25 duy trì; ghi tay giá trị khác định nghĩa bị `trg_SanPham_KiemTraDaBan` từ chối (50250) |
 | MaThuongHieu | INT | NN | `FK_SAN_PHAM_THUONG_HIEU` → `THUONG_HIEU` | liên kết Cung cấp (1:N) |
 | MaDanhMuc | INT | NN | `FK_SAN_PHAM_DANH_MUC` → `DANH_MUC` | liên kết Thuộc danh mục (1:N) |
 
@@ -146,11 +150,12 @@ Cả 10 bảng có đúng **6 cột cho phép NULL**: `NGUOI_DUNG.SdtXacThuc`, `
 | RB | Nội dung | Hiện thực | Mã lỗi |
 |---|---|---|---|
 | 4 | Khách hàng đủ 13 tuổi | `sp_TaoNguoiDung`; `trg_KhachHang_KiemTraVaiTro` khi tạo hoặc thêm vai trò khách; `trg_NguoiDung_KiemTra` khi sửa ngày sinh. Không dùng CHECK được vì điều kiện phụ thuộc bảng `KHACH_HANG` | 50220, 50221 |
-| 9 | Cây danh mục không có vòng | `CK_DANH_MUC_KhongTuTroCha` (tự trỏ) + `trg_DanhMuc_KhongVongLap` (vòng qua nhiều cấp, kể cả khi một câu lệnh sửa nhiều dòng) | 547, 50240 |
+| 9 | Cây danh mục không có vòng | `CK_DANH_MUC_KhongTuTroCha` (tự trỏ) + `trg_DanhMuc_KhongVongLap` (vòng qua nhiều cấp, dài bao nhiêu cũng bắt được, kể cả khi một câu lệnh sửa nhiều dòng) | 547, 50240 |
 | 10 | Lương dương, ngày vào làm không sau hôm nay | `CK_NHAN_VIEN_Luong`, `CK_NHAN_VIEN_NgayVaoLam` | 547 |
 | 13 | Tối đa một địa chỉ mặc định mỗi khách | index lọc `UX_DIA_CHI_MotMacDinh` | 2601 |
 | 14 | Địa chỉ giao thuộc khách đặt đơn | `UQ_DIA_CHI_MaDiaChi_MaKhachHang` + khóa ngoại ghép ở `DON_HANG` (file 13 của Đại) | 547 |
-| — | Total specialization | mục 3 | 50222 – 50225 |
+| — | Total specialization | mục 3 | 50222 – 50226 |
+| — | Thuộc tính dẫn xuất `TongSoLuongDaBan` | trigger T25 (`25_trigger_dan_xuat.sql`) duy trì; `trg_SanPham_KiemTraDaBan` chặn ghi tay giá trị sai | 50250 |
 
 Tài liệu phân công ghi "17 ràng buộc gốc" vì bản BTL1 đã chỉnh có thêm RB17 về điểm. RB17 thuộc phần của Đại, câu thay thế ở `docs/dac-ta-nghiep-vu-diem.md` mục 8. Bản PDF BTL1 trên máy Hưng có 16 ràng buộc ở mục 1.4.
 

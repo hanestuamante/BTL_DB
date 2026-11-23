@@ -10,6 +10,9 @@
    CÁCH CHẠY: chạy cùng các file khác theo lệnh "Chạy toàn bộ" ở README (tên bắt đầu bằng "dan"
    nên chạy trước 90_kiem_thu_don_hang_diem.sql). File KHÔNG để lại thay đổi dữ liệu: mọi ca có
    sửa dữ liệu bọc trong BEGIN TRAN … ROLLBACK; DX10 ở cuối kiểm lại 6 số ban đầu.
+   Riêng số IDENTITY đã cấp trong ca bị ROLLBACK (đánh giá, nhật ký) không lấy lại được, nên mã mới
+   ở file chạy sau sẽ nhảy số; file của Đại đọc mã qua OUTPUT nên không bị ảnh hưởng.
+   Có ca FAIL thì cuối file THROW 50399 để vòng chạy của README dừng lại.
    Mã 50399 dành riêng cho lỗi so sánh trong kiểm thử.
    ===================================================================== */
 SET NOCOUNT ON;
@@ -140,6 +143,16 @@ EXEC #KyVongOK 'DX9', N'Một câu UPDATE đưa 2 đơn (5, 8) sang DA_GIAO', N'
 UPDATE dbo.DON_HANG SET TrangThaiDon = ''DA_GIAO'' WHERE MaDonHang IN (5, 8);
 EXEC #KiemDaBan ''4:1;1:6'';
 ROLLBACK;';
+EXEC #KyVongLoi 'DX11', N'Ghi tay giá trị sai vào TongSoLuongDaBan (SP6 = 999)', 50250, N'BEGIN TRAN;
+UPDATE dbo.SAN_PHAM SET TongSoLuongDaBan = 999 WHERE MaSanPham = 6;
+ROLLBACK;';
+EXEC #KyVongLoi 'DX12', N'Thêm sản phẩm mới với số đã bán khác 0', 50250, N'BEGIN TRAN;
+INSERT dbo.SAN_PHAM (MaSanPham, TenSanPham, GiaNiemYet, TongSoLuongDaBan, MaThuongHieu, MaDanhMuc) VALUES (77, N''Sản phẩm thử'', 100000, 50, 1, 2);
+ROLLBACK;';
+EXEC #KyVongOK 'DX13', N'Ghi lại đúng giá trị (đồng bộ như cuối file 40) vẫn được', N'BEGIN TRAN;
+UPDATE dbo.SAN_PHAM SET TongSoLuongDaBan = 4 WHERE MaSanPham = 1;
+EXEC #KiemDaBan ''1:4'';
+ROLLBACK;';
 GO
 
 /* =====================================================================
@@ -182,4 +195,8 @@ GO
 /* ---------- TỔNG HỢP ---------- */
 SELECT COUNT(*) AS TongSoCa, SUM(CAST(Dat AS INT)) AS SoPass, COUNT(*) - SUM(CAST(Dat AS INT)) AS SoFail FROM #KQ;
 SELECT Ma, MoTa, ChiTiet FROM #KQ WHERE Dat = 0 ORDER BY STT;
+GO
+/* Có ca FAIL thì báo lỗi để vòng "Chạy toàn bộ" (sqlcmd -b) dừng ngay tại file này */
+IF EXISTS (SELECT 1 FROM #KQ WHERE Dat = 0)
+    THROW 50399, N'90_kiem_thu_dan_xuat_nghiep_vu.sql có ca FAIL, xem bảng tổng hợp ở trên.', 1;
 GO
