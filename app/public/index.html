@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biến thể sản phẩm</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/variants.js"></script>
+</head>
+<body>
+  <nav aria-label="Menu chính" data-navigation></nav>
+  <main>
+    <header class="page-header">
+      <h1>Biến thể sản phẩm</h1>
+      <button id="add-variant" class="primary">Thêm biến thể</button>
+    </header>
+    <form id="filters" class="filters" aria-label="Lọc biến thể">
+      <label>Từ khóa <input name="tuKhoa" maxlength="100" type="search" placeholder="Tên sản phẩm hoặc mã biến thể"></label>
+      <label>Danh mục <select name="maDanhMuc" data-lookup="danh-muc"><option value="">Tất cả</option></select></label>
+      <label>Thương hiệu <select name="maThuongHieu" data-lookup="thuong-hieu"><option value="">Tất cả</option></select></label>
+      <label>Giá tối thiểu <input name="giaMin" type="number" min="0" step="0.01"></label>
+      <label>Giá tối đa <input name="giaMax" type="number" min="0" step="0.01"></label>
+      <label class="check"><input name="chiConHang" type="checkbox" value="1"> Chỉ còn hàng</label>
+      <label>Sắp xếp <select name="sapXep">
+        <option value="TEN">Theo tên</option>
+        <option value="GIA_TANG">Giá tăng dần</option>
+        <option value="GIA_GIAM">Giá giảm dần</option>
+        <option value="TON_KHO_TANG">Tồn kho tăng dần</option>
+        <option value="TON_KHO">Tồn kho giảm dần</option>
+      </select></label>
+      <button type="submit" class="primary">Tìm kiếm</button>
+    </form>
+    <div id="results" class="results" aria-live="polite"></div>
+
+    <dialog id="variant-dialog" aria-labelledby="variant-title">
+      <h2 id="variant-title">Thêm biến thể</h2>
+      <form id="variant-form" class="editor">
+        <label>Sản phẩm <select name="maSanPham" required data-lookup="san-pham"><option value="">Chọn sản phẩm</option></select></label>
+        <label>Mã biến thể <input name="maBienTheNoiBo" type="text" required maxlength="30" autocapitalize="characters"></label>
+        <label>Màu sắc <input name="mauSac" maxlength="60"></label>
+        <label>Kích cỡ <input name="kichCo" maxlength="30"></label>
+        <label>Giá bán (₫) <input name="giaBanRieng" type="number" step="0.01"></label>
+        <div class="field">
+          <label for="stock">Tồn kho</label>
+          <div class="stepper-input">
+            <button type="button" data-step="-1" aria-label="Giảm tồn kho">−</button>
+            <input id="stock" name="tonKhoRieng" type="number" step="1">
+            <button type="button" data-step="1" aria-label="Tăng tồn kho">+</button>
+          </div>
+        </div>
+        <p id="variant-error" class="form-error full-width" role="alert" hidden></p>
+        <div class="actions full-width">
+          <button type="button" id="cancel-edit">Hủy</button>
+          <button type="submit" class="primary">Lưu biến thể</button>
+        </div>
+      </form>
+    </dialog>
+  </main>
+  <p class="toast" data-toast role="status" hidden></p>
+</body>
+</html>

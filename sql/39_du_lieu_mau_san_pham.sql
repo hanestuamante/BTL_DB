@@ -39,5 +39,47 @@ INSERT dbo.BIEN_THE_SAN_PHAM (MaSanPham, MaBienTheNoiBo, MauSac, KichCo, TonKhoR
  (5, 'DEN-2M',    N'Đen',       N'2m',   60, 150000),
  (6, 'TRONG-IP15',N'Trong suốt',N'iPhone 15', 70, 80000);
 GO
-PRINT N'39: Đã nạp 5 danh mục, 5 thương hiệu, 6 sản phẩm, 6 hình ảnh, 10 biến thể.';
+/* ---------- Mở rộng dữ liệu mẫu T16 (Lê Viễn Bằng) ---------- */
+INSERT dbo.DANH_MUC (MaDanhMuc, TenDanhMuc, MaDanhMucCha) VALUES
+ (6, N'Âm thanh', 4), (7, N'Phụ kiện thời trang', 1), (8, N'Phụ kiện máy tính', 4);
+
+INSERT dbo.THUONG_HIEU (MaThuongHieu, TenThuongHieu) VALUES
+ (6, N'Sony'), (7, N'Logitech'), (8, N'Đông Hải');
+
+INSERT dbo.SAN_PHAM (MaSanPham, TenSanPham, GiaNiemYet, MoTaChiTiet, MaThuongHieu, MaDanhMuc) VALUES
+ (7,  N'Tai nghe Bluetooth',      890000, N'Tai nghe chụp tai, kết nối đa điểm', 6, 6),
+ (8,  N'Chuột không dây',         390000, N'Chuột quang dùng đầu thu USB',       7, 8),
+ (9,  N'Dép quai ngang',          290000, N'Đế cao su chống trượt',              8, 3),
+ (10, N'Túi đeo chéo',            450000, N'Vải canvas, dây đeo điều chỉnh',     8, 7),
+ (11, N'Loa Bluetooth cầm tay',  1190000, N'Loa di động, sạc USB-C',              6, 6),
+ (12, N'Bàn phím không dây',      690000, N'Bố cục gọn, kết nối Bluetooth',       7, 8);
+
+INSERT dbo.HINH_ANH_SAN_PHAM (MaSanPham, DuongDanHinhAnh) VALUES
+ (7,'/img/sp7-1.jpg'), (8,'/img/sp8-1.jpg'), (9,'/img/sp9-1.jpg'),
+ (10,'/img/sp10-1.jpg'), (11,'/img/sp11-1.jpg'), (12,'/img/sp12-1.jpg');
+
+INSERT dbo.BIEN_THE_SAN_PHAM (MaSanPham, MaBienTheNoiBo, MauSac, KichCo, TonKhoRieng, GiaBanRieng) VALUES
+ (7,  'DEN-STD',   N'Đen',       N'Tiêu chuẩn', 28,  890000),
+ (7,  'TRANG-STD', N'Trắng',     N'Tiêu chuẩn', 14,  920000),
+ (8,  'DEN-S',     N'Đen',       N'S',          35,  390000),
+ (8,  'HONG-S',    N'Hồng',      N'S',           0,  410000),
+ (9,  'NAU-39',    N'Nâu',       N'39',         16,  290000),
+ (9,  'NAU-40',    N'Nâu',       N'40',         18,  290000),
+ (10, 'KEM-S',     N'Kem',       N'S',          20,  420000),
+ (10, 'DEN-M',     N'Đen',       N'M',          26,  480000),
+ (11, 'DEN-STD',   N'Đen',       N'Tiêu chuẩn', 12, 1190000),
+ (11, 'XANH-STD',  N'Xanh navy', N'Tiêu chuẩn',  8, 1240000),
+ (12, 'XAM-75',    N'Xám',       N'75 phím',        18,  690000),
+ (12, 'TRANG-75',  N'Trắng',     N'75 phím',        11,  720000);
+
+-- Sản phẩm 12 chưa có mặt trong giỏ hay đơn; có thể dùng để demo xóa một biến thể.
+INSERT dbo.GIO_HANG (MaKhachHang, MaSanPham, MaBienTheNoiBo, SoLuongDuMua) VALUES
+ (1,  7, 'DEN-STD',   1),
+ (1, 10, 'KEM-S',     1),
+ (2,  8, 'DEN-S',     2),
+ (3,  9, 'NAU-39',    1),
+ (4,  7, 'TRANG-STD', 1),
+ (6, 11, 'XANH-STD',  1);
+GO
+PRINT N'39: Đã nạp 8 danh mục, 8 thương hiệu, 12 sản phẩm, 12 hình ảnh, 22 biến thể và 6 dòng giỏ hàng.';
 GO
