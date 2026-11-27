@@ -19,8 +19,6 @@ PROCEDURES = {
     ),
 }
 
-SEARCH_SORTS = ("TEN", "GIA_TANG", "GIA_GIAM", "TON_KHO", "TON_KHO_TANG")
-
 LOOKUP_QUERIES = {
     "danh-muc": "SELECT MaDanhMuc AS id, TenDanhMuc AS ten FROM dbo.DANH_MUC ORDER BY ten, id",
     "thuong-hieu": "SELECT MaThuongHieu AS id, TenThuongHieu AS ten FROM dbo.THUONG_HIEU ORDER BY ten, id",
@@ -31,8 +29,9 @@ LOOKUP_QUERIES = {
 def run_procedure(operation, values):
     name, fields = PROCEDURES[operation]
     # Tên thủ tục và tham số lấy từ hằng số, giá trị truyền riêng cho pymssql.
+    # Tên trường gửi từ web trùng tên tham số của thủ tục.
     assignments = ", ".join(f"@{field}=%s" for field in fields)
-    params = tuple(values[field[0].lower() + field[1:]] for field in fields)
+    params = tuple(values[field] for field in fields)
     return query(f"EXEC {name} {assignments}", params, procedure=name)
 
 
@@ -42,14 +41,6 @@ def ping():
 
 def lookup(name):
     return query(LOOKUP_QUERIES[name])
-
-
-def list_orders():
-    return query(
-        """SELECT MaDonHang AS id, CONVERT(CHAR(19), NgayDatHang, 120) AS ngayDat,
-                  TrangThaiDon AS trangThai
-           FROM dbo.DON_HANG ORDER BY NgayDatHang DESC, MaDonHang DESC"""
-    )
 
 
 def order_total(order_id):

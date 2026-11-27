@@ -14,24 +14,20 @@ let lastSearch = 0;
 const variantPath = row =>
   `/bien-the/${encodeURIComponent(row.MaSanPham)}/${encodeURIComponent(row.MaBienTheNoiBo)}`;
 
-const editableFields = {
-  mauSac: 'MauSac',
-  kichCo: 'KichCo',
-  giaBanRieng: 'GiaBanRieng',
-  tonKhoRieng: 'TonKhoRieng'
-};
+// Tên ô nhập trùng tên cột và tên tham số của thủ tục.
+const editableFields = ['MauSac', 'KichCo', 'GiaBanRieng', 'TonKhoRieng'];
 
 function openEditor(row = null) {
   editing = row;
   form.reset();
   formError.hidden = true;
-  form.elements.maSanPham.disabled = Boolean(row);
-  form.elements.maBienTheNoiBo.readOnly = Boolean(row);
+  form.elements.MaSanPham.disabled = Boolean(row);
+  form.elements.MaBienTheNoiBo.readOnly = Boolean(row);
   title.textContent = row ? 'Sửa biến thể' : 'Thêm biến thể';
   if (row) {
-    form.elements.maSanPham.value = row.MaSanPham;
-    form.elements.maBienTheNoiBo.value = row.MaBienTheNoiBo;
-    for (const [field, column] of Object.entries(editableFields)) form.elements[field].value = row[column] ?? '';
+    form.elements.MaSanPham.value = row.MaSanPham;
+    form.elements.MaBienTheNoiBo.value = row.MaBienTheNoiBo;
+    for (const field of editableFields) form.elements[field].value = row[field] ?? '';
   }
   dialog.showModal();
 }
@@ -80,14 +76,14 @@ function stockCell(row) {
       const latest = (await api('/bien-the')).find(other => variantPath(other) === variantPath(row));
       if (!latest) throw new Error('Biến thể không còn tồn tại.');
       Object.assign(row, latest);
-      const values = Object.fromEntries(Object.entries(editableFields).map(([field, column]) => [field, row[column]]));
-      values.tonKhoRieng = Math.max(0, row.TonKhoRieng + amount);
+      const values = Object.fromEntries(editableFields.map(field => [field, row[field]]));
+      values.TonKhoRieng = Math.max(0, row.TonKhoRieng + amount);
       await api(variantPath(row), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values)
       });
-      row.TonKhoRieng = values.tonKhoRieng;
+      row.TonKhoRieng = values.TonKhoRieng;
       toast(`Đã lưu tồn kho ${row.MaBienTheNoiBo}: ${row.TonKhoRieng}`);
     } catch (error) {
       toast(error.message, true);
@@ -121,7 +117,7 @@ filterForm.addEventListener('submit', event => {
 addButton.addEventListener('click', () => openEditor());
 document.querySelector('#cancel-edit').addEventListener('click', () => dialog.close());
 dialog.addEventListener('cancel', event => { if (submitButton.disabled) event.preventDefault(); });
-form.elements.maBienTheNoiBo.addEventListener('input', event => {
+form.elements.MaBienTheNoiBo.addEventListener('input', event => {
   const input = event.currentTarget;
   const start = input.selectionStart;
   const end = input.selectionEnd;

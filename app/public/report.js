@@ -12,7 +12,7 @@ function draw() {
   const { key, direction } = sort;
   const sign = direction === 'ascending' ? 1 : -1;
   const sorted = [...rows].sort((a, b) => {
-    const difference = textColumns.has(key) || key === 'TongSoLuongBan'
+    const difference = textColumns.has(key)
       ? collator.compare(a[key], b[key])
       : Number(a[key]) - Number(b[key]);
     return sign * difference || a.MaSanPham - b.MaSanPham;
