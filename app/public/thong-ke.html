@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thống kê bán hàng</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/report.js"></script>
+</head>
+<body>
+  <nav aria-label="Menu chính" data-navigation></nav>
+  <main>
+    <header class="page-header">
+      <h1>Thống kê bán hàng</h1>
+    </header>
+    <form id="filters" class="filters" aria-label="Lọc thống kê">
+      <label>Danh mục <select name="MaDanhMuc" data-lookup="danh-muc"><option value="">Tất cả</option></select></label>
+      <label>Thương hiệu <select name="MaThuongHieu" data-lookup="thuong-hieu"><option value="">Tất cả</option></select></label>
+      <label>Từ ngày <input name="TuNgay" type="date"></label>
+      <label>Đến ngày <input name="DenNgay" type="date"></label>
+      <label>Số lượng bán tối thiểu <input name="SoLuongToiThieu" type="number" min="0" max="2147483647" step="1"></label>
+      <label>Doanh thu tối thiểu (₫) <input name="DoanhThuToiThieu" type="number" min="0" step="0.01"></label>
+      <button type="submit" class="primary">Xem thống kê</button>
+    </form>
+    <p>Doanh thu tính theo đơn giá lúc đặt của các đơn đã giao, trước khi trừ giảm giá.</p>
+    <div id="results" class="results" aria-live="polite"></div>
+  </main>
+  <p class="toast" data-toast role="status" hidden></p>
+</body>
+</html>

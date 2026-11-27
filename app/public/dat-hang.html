@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đặt hàng</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/order.js"></script>
+</head>
+<body>
+  <nav aria-label="Menu chính" data-navigation></nav>
+  <main>
+    <header class="page-header">
+      <h1>Đặt hàng</h1>
+    </header>
+    <p class="customer">Khách hàng: <strong data-customer></strong> · Điểm khả dụng: <strong data-points></strong></p>
+    <form id="order-form" class="order">
+      <section class="filters" aria-label="Chọn sản phẩm">
+        <label class="wide">Sản phẩm <select id="variant"></select></label>
+        <div class="field">
+          <label for="quantity">Số lượng</label>
+          <div class="stepper-input">
+            <button type="button" data-step="-1" aria-label="Giảm số lượng">−</button>
+            <input id="quantity" type="number" min="1" step="1" value="1">
+            <button type="button" data-step="1" aria-label="Tăng số lượng">+</button>
+          </div>
+        </div>
+        <button type="button" id="add-item">Thêm vào đơn</button>
+      </section>
+      <div class="results" id="items"></div>
+      <section class="filters checkout" aria-label="Thông tin giao hàng và thanh toán">
+        <label>Địa chỉ <select name="maDiaChi" required></select></label>
+        <label>Vận chuyển <select name="maPhuongThucVC" required></select></label>
+        <label>Voucher <select name="maVoucher"><option value="">Không dùng</option></select></label>
+        <div class="points-field">
+          <label><span class="points-label">Điểm sử dụng <small>(có <span data-points></span>)</small></span> <input name="diemSuDung" type="number" min="0" step="1" value="0"></label>
+          <button type="button" id="use-max" disabled>Dùng tối đa</button>
+        </div>
+        <label>Thanh toán <select name="maPhuongThucTT" required></select></label>
+        <label class="note">Lời nhắn <input name="loiNhan" maxlength="500"></label>
+      </section>
+      <section id="preview" class="payment-result" aria-label="Tổng giá trị đơn" hidden>
+        <table>
+          <caption>Tổng giá trị đơn (tạm tính)</caption>
+          <tbody>
+            <tr><th scope="row">Tiền hàng (H)</th><td data-preview="H"></td></tr>
+            <tr><th scope="row">Giảm từ voucher (V) <small data-voucher-note></small></th><td data-preview="V"></td></tr>
+            <tr><th scope="row">Giảm bằng điểm (G) <small data-points-note></small></th><td data-preview="G"></td></tr>
+            <tr><th scope="row">Phí vận chuyển (F)</th><td data-preview="F"></td></tr>
+          </tbody>
+          <tfoot><tr><th scope="row">Cần thanh toán (T = H − V − G + F)</th><td data-preview="T"></td></tr></tfoot>
+        </table>
+        <ul class="policy" data-policy></ul>
+        <p class="form-error" data-preview-error role="status"></p>
+      </section>
+      <button type="submit" class="primary" disabled>Đặt hàng</button>
+    </form>
+    <div id="order-result" class="payment-result" aria-live="polite" hidden>
+      <table>
+        <caption>Đã đặt đơn #<span data-order-id></span> · <span data-status></span></caption>
+        <tbody>
+          <tr><th scope="row">Tiền hàng (H)</th><td data-amount="H"></td></tr>
+          <tr><th scope="row">Giảm từ voucher (V)</th><td data-amount="V"></td></tr>
+          <tr><th scope="row">Giảm bằng điểm (G), dùng <span data-used></span> điểm</th><td data-amount="G"></td></tr>
+          <tr><th scope="row">Phí vận chuyển (F)</th><td data-amount="F"></td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Tổng thanh toán (T)</th><td data-amount="T"></td></tr></tfoot>
+      </table>
+    </div>
+  </main>
+  <p class="toast" data-toast role="status" hidden></p>
+</body>
+</html>
